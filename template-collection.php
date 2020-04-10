@@ -29,6 +29,7 @@ if( $query->have_posts() ) {
                     <a href='{$permalink}'>
                         <div class='collectionContent'>
                             <h2>{$title}</h2>
+                            <div class='button'>Voir collection</div>
                         </div>
                     </a>
                 </div>

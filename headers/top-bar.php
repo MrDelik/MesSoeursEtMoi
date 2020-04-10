@@ -12,7 +12,7 @@ $isRetailer = get_user_meta(get_current_user_id(), 'isRetailer', true);
                 <div class="large-12 columns">
                     <div class="left-text left rtl-right">
                         <div class="inner-block">
-							<?php if( !empty($isRetailer) ): ?>
+							<?php if( !empty($isRetailer) || current_user_can('administrator') ): ?>
                             <?=$topbar_left?>
                         	<?php endif; ?>
 						</div>
@@ -29,7 +29,9 @@ $isRetailer = get_user_meta(get_current_user_id(), 'isRetailer', true);
         <?php else : ?>
             <!-- Mobile Top-bar -->
             <div class="topbar-mobile-text">
+	            <?php if( !empty($isRetailer) || current_user_can('administrator') ): ?>
                 <?php echo $topbar_left; ?>
+	            <?php endif; ?>
             </div>
             <div class="topbar-menu-container hidden-tag">
                 <?php do_action('nasa_support_multi_languages'); ?>

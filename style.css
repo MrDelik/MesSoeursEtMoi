@@ -46,6 +46,10 @@ Version: 1.0
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    transition-delay: 0s;
+}
+.collectionArticle > * {
+    transition-delay: 0s;
 }
 .collectionArticle:before {
     content:'';
@@ -54,6 +58,8 @@ Version: 1.0
 }
 
 .collectionContent {
+    visibility: hidden;
+    opacity: 0;
     position: absolute;
     width: 100%;
     height: 100%;
@@ -66,14 +72,32 @@ Version: 1.0
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all ease 0.5s;
+    align-content: center;
+    transition: all 0.5s ease;
+    flex-wrap: wrap;
+    background:rgba(255, 255, 255, 0.80);
 }
 .collectionContent:hover {
     border: 1rem solid rgba(255, 255, 255, 0.75);
+}
+.collectionContent h2 {
+    text-align: center;
+    width:100%;
+    margin-bottom:1rem;
+}
+
+.collectionArticle:hover .collectionContent {
+    visibility: visible;
+    opacity: 1;
 }
 
 #collectionNav .nav-links {
     display:flex;
     justify-content: space-between;
     flex-wrap: nowrap;
+}
+
+
+.nav-post-title {
+    margin:1rem;
 }

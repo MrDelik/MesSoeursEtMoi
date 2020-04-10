@@ -5,28 +5,32 @@
 
 get_header();
 $args = array(
-    'post_type' => 'post',
-    'tax_query' => array(
+    'post_type' => 'collection',
+/*    'tax_query' => array(
         array(
             'taxonomy' => 'people',
             'field'    => 'slug',
             'terms'    => 'bob',
         ),
-    ),
+    ),*/
 );
 $query = new WP_Query( $args );
-if( $my_query->have_posts() ) {
+if( $query->have_posts() ) {
     echo "<div id='collectionContainer'>";
-    while( $my_query->have_posts() ) {
-        $my_query->the_post();
-
+    while( $query->have_posts() ) {
+        $query->the_post();
+        $postID = $post->ID;
         $title = get_the_title();
-        $thumbnail = get_the_post_thumbnail_url('');
+        $thumbnail = get_the_post_thumbnail_url( $postID, 'large' );
         $content = do_blocks( get_the_content());
-
+        $permalink = get_the_permalink();
             echo "
-                <div class='collection' style='background:url({$thumbnail})'>
-                    <h2>{$title}</h2>
+                <div class='collectionArticle' style='background-image:url({$thumbnail})'>
+                    <a href='{$permalink}'>
+                        <div class='collectionContent'>
+                            <h2>{$title}</h2>
+                        </div>
+                    </a>
                 </div>
             ";
     } 

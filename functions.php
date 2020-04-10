@@ -72,3 +72,17 @@ function my_phpmailer_configuration( $phpmailer ) {
 	$phpmailer->FromName = "Eyecone"; // Nom affiché lors de l'envoi du mail
 }
 add_action( 'phpmailer_init', 'my_phpmailer_configuration' );
+
+function register_taxonomy_retailer(){
+	register_taxonomy(
+			'retailer',
+		'product',
+		[
+			'labels' => [
+				'name' => 'Retailers',
+				'singular_name' => 'Retailer'
+			]
+		]
+	);
+}
+add_action('init', 'register_taxonomy_retailer');

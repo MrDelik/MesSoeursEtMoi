@@ -38,9 +38,9 @@ get_header(); ?>
             // Previous/next post navigation.
             the_post_navigation( array(
                 'next_text' => 
-                    '<span class="btn btn-three nav-post-title">%title</span>',
+                    '<span class="nav-post-title">%title</span>',
                 'prev_text' => 
-                    '<span class="btn btn-three nav-post-title">%title</span>',
+                    '<span class="nav-post-title">%title</span>',
             ) );
             echo "<div>";
   
@@ -51,4 +51,4 @@ get_header(); ?>
         </main><!-- .site-main -->
     </div><!-- .content-area -->
   
-<?php get_footer(); ?>    
+<?php get_footer(); ?>

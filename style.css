@@ -101,3 +101,16 @@ Version: 1.0
 .nav-post-title {
     margin:1rem;
 }
+
+
+/*************************************************************** TOP BAR CURRENCY **************************************************************************************************/
+#top-bar .topbar-menu-container {
+    display:flex;
+}
+
+#top-bar .topbar-menu-container .wcml-dropdown {
+    margin:0;
+    text-align: right;
+    margin-right: 1.5rem;
+}
+}

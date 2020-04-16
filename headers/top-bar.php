@@ -19,6 +19,7 @@ $isRetailer = get_user_meta(get_current_user_id(), 'isRetailer', true);
                     </div>
                     <div class="right-text nasa-hide-for-mobile right rtl-left">
                         <div class="topbar-menu-container">
+                            <?php do_action('wcml_currency_switcher', array('format' => '%name% (%symbol%)'));?>
                             <?php do_action('nasa_support_multi_languages'); ?>
                             <?php elessi_get_menu('topbar-menu', 'nasa-topbar-menu', 1); ?>
                             <?php echo elessi_tiny_account(true); ?>

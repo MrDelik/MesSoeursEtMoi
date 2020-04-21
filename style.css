@@ -149,3 +149,12 @@ Version: 1.0
     padding:0 0.5rem;
     font-size: 0;
 }
+
+/******** Product detail *********/
+.bullet-color{
+    display: inline-block;
+    vertical-align: middle;
+    width:15px;
+    height:15px;
+    border-radius:50%;
+}

@@ -1,0 +1,18 @@
+.addresses-container{
+    display:flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+.addresses-container .address{
+    padding:6px;
+}
+.addresses-container .address h2{
+    padding:6px 0 !important;
+    margin-bottom:6px;
+}
+.total-container{
+    font-size:18px;
+    font-weight: bold;
+    text-align:center;
+}

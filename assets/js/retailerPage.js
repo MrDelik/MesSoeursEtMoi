@@ -172,7 +172,17 @@ class RetailSaver{
             productToStringify = existingCookie;
         }
 
-        CookieManager.set('retailerProducts', JSON.stringify(productToStringify));
+        /* age set at one week from now */
+        CookieManager.set(
+            'retailerProducts',
+            JSON.stringify(productToStringify),
+            '/',
+            '',
+            60 * 60 * 24 * 7
+        );
+
+        /* Show validation button */
+        saveOrderButton.showButton();
     }
 }
 
@@ -235,6 +245,7 @@ class Product{
     constructor( params = {}, row = undefined ){
         this.params = {
             idSelector: '[data-product-id]',
+            nameSelector: '.nasa-show-one-line a',
             qtySelector: '.quantity',
             unitPriceSelector: '.retailer-price-container',
             colorSelector: '.selected-color',
@@ -259,6 +270,9 @@ class Product{
 
     getId(){
         return this.row.querySelector(this.params.idSelector).dataset.productId;
+    }
+    getName(){
+        return this.row.querySelector(this.params.nameSelector).textContent.trim();
     }
     getQty(){
         return this.row.querySelector( this.params.qtySelector ).value;
@@ -310,7 +324,7 @@ class CookieManager{
      * @param secure
      * @param sameSite
      */
-    static set( name, value, path = '', domain = '', maxAge = '', secure = '', sameSite = ''){
+    static set( name, value, path = '/', domain = '', maxAge = '', secure = '', sameSite = ''){
         let cookieStr =  name+'='+value;
 
         if( path !== '' ){
@@ -358,9 +372,364 @@ class CookieManager{
     }
 }
 
+class SaveOrderButton{
+    constructor(params = {}){
+        this.params = {
+            selector: '.save-retailer-order',
+            buttonContainerSelector: '.save-retailer-order-container',
+            onClass: 'show',
+            copyCheckboxSelector: '.receive-copy'
+        };
+
+        for(let param in params){
+            if(param in this.params){
+                this.params[param] = params[param];
+            }
+        }
+
+        let button = document.querySelector(this.params.selector);
+        if( button !== null ){
+            button.addEventListener('click', this.saveOrder);
+        }
+    }
+
+    showButton(){
+        document.querySelector(this.params.buttonContainerSelector).classList.add( this.params.onClass );
+    }
+
+    hideButton(){
+        document.querySelector(this.params.buttonContainerSelector).classList.remove( this.params.onClass );
+    }
+
+    saveOrder( e ){
+        e.preventDefault();
+
+        let fd = new FormData();
+        fd.append('action', 'save_retailer_order');
+        fd.append('_ajax_nonce', this.dataset.sec);
+        fd.append('selectedBillingAddress', document.querySelector('#billingAddressSelect').value);
+
+        let copyCheckbox = document.getElementById( 'receiveOrderCopy' );
+        if( copyCheckbox.checked ){
+            fd.append('getCopy', copyCheckbox.value);
+        }
+
+        jQuery.ajax({
+            type: 'POST',
+            url:'/wp-admin/admin-ajax.php',
+            data: fd,
+            cache: false,
+            processData: false,
+            contentType: false,
+            xhrFields: {
+                withCredentials: true
+            },
+            beforeSend: function(xhrObj, settings){
+                LoaderIconManager.show( '#retailerOrderLoader' );
+            },
+            success: function( data, status, jqXhr ){
+                Swal.fire({
+                    icon: 'success',
+                    title : data.message,
+                    timer: 1500
+                });
+            },
+            error:function( data, jqXhr, errorThrown ){
+                Swal.fire({
+                    icon: 'error',
+                    title : data.message
+                });
+            },
+            complete: function(){
+                LoaderIconManager.hide( '#retailerOrderLoader' );
+            }
+        });
+    }
+}
+
+/**
+ * Handle the modal showing and hiding
+ */
+class ModalHandler{
+    constructor( params = {} ){
+        this.params = {
+            selector: '.modal-toggler',
+            modalSelector: '.modal',
+            backgroundSelector: '.modal-background',
+            closeModalSelector: '.modal-close',
+            onClass: 'on',
+            scrollLockClass: 'scroll-locked'
+        };
+
+        document.querySelectorAll( this.params.selector ).forEach(button => button.addEventListener('click', e => this.show(e)));
+        document.querySelectorAll( this.params.backgroundSelector ).forEach( background => background.addEventListener('click', e => {
+            this.hide( e.target.closest(this.params.backgroundSelector).getAttribute('id') );
+        }));
+
+        document.querySelectorAll( this.params.closeModalSelector ).forEach(button => button.addEventListener('click', e => {
+            this.hide( e.target.closest(this.params.backgroundSelector).getAttribute('id') );
+        }));
+
+        document.querySelectorAll( this.params.modalSelector ).forEach(modal => modal.addEventListener('click', e => e.stopPropagation()));
+    }
+
+    show( e ){
+        document.body.classList.add(this.params.scrollLockClass);
+        let modalId = e.target.closest(this.params.selector).dataset.target;
+        let modal = document.getElementById( modalId );
+        modal.style.display = 'block';
+        setTimeout(() => {
+            modal.classList.add( this.params.onClass );
+        }, 100);
+    }
+
+    hide( modalId ){
+        document.body.classList.remove(this.params.scrollLockClass);
+        let modal = document.getElementById( modalId );
+        modal.addEventListener('transitionend', function(){
+            modal.style.display = '';
+        }, {once: true});
+
+        modal.classList.remove( this.params.onClass );
+    }
+}
+
+class AddressObserver{
+    constructor( params = {} ){
+        this.params = {
+            selector : '#billingAddressSelect',
+            addressSelector: '.address',
+            selectedClass: 'selected-address'
+        };
+
+        let addressSelect = document.querySelector(this.params.selector);
+        if( addressSelect !== null ){
+            addressSelect.addEventListener('change', e => this.toggleAddress(e));
+        }
+    }
+
+    toggleAddress(e){
+        let selectedAddress = document.querySelector(this.params.addressSelector+'.'+this.params.selectedClass);
+        if( selectedAddress !== null ){
+            selectedAddress.classList.remove(this.params.selectedClass);
+        }
+
+        document.getElementById(e.target.value).classList.add(this.params.selectedClass);
+    }
+
+    getSelectedAddress(){
+        return document.querySelector(this.params.addressSelector+'.'+this.params.selectedClass).innerHTML;
+    }
+}
+
+class StepsSwitcher{
+    constructor(params = {}){
+        this.params = {
+            buttonContainerSelector : '.steps-button-container',
+            stepSwitcherSelector: '.step-switcher',
+            activeClass: 'step-active'
+        };
+
+        for(let param in params){
+            if(param in this.params){
+                this.params[param] = params[param];
+            }
+        }
+
+        document.querySelectorAll(this.params.stepSwitcherSelector).forEach(button => button.addEventListener('click', e => this.switchStep(e)));
+    }
+
+    switchStep(e){
+        e.preventDefault();
+        let button = e.target.closest(this.params.stepSwitcherSelector);
+
+        if( 'trigger' in button.dataset && button.dataset.trigger === 'orderRecap' ){
+            recapManager.createRecap();
+        }
+
+        let targetedStep = button.dataset.target;
+
+        document.querySelectorAll('.'+this.params.activeClass).forEach(step => step.classList.remove(this.params.activeClass));
+        document.querySelectorAll('.'+targetedStep).forEach(step => step.classList.add(this.params.activeClass));
+    }
+}
+
+/**
+ * Class that manage the retailer order recap.
+ * Allow to build it and get informations quickly
+ */
+class OrderRecapManager{
+    constructor(params = {}){
+        this.params = {
+            containerSelector: '.orderRecapContainer',
+            templateSelector: '#recapRowTemplate',
+            totalPriceContainerSelector: '.totalPriceRecap',
+            shippingAddressSelector: '.billing-address.address-container'
+        };
+
+        for(let param in params){
+            if(param in this.params){
+                this.params[param] = params[param];
+            }
+        }
+    }
+
+    createRecap(){
+        if( CookieManager.exist('retailerProducts') ){
+            let order = JSON.parse( CookieManager.get('retailerProducts') );
+            let orderDocFrag = document.createDocumentFragment();
+
+            let total = 0;
+            for(let productID in order){
+                let product = new Product({}, document.querySelector('[data-product-id="'+productID+'"]'));
+
+                for(let colorSize in order[productID]){
+                    let [color, size] = colorSize.split('-');
+                    let detailRow = document.querySelector(this.params.templateSelector).content.cloneNode(true);
+
+                    let totalRow = order[productID][colorSize].qty * order[productID][colorSize].price;
+
+                    detailRow.querySelector('.productInfos').textContent = product.getName() + ' - ' + size + ' - ' + color;
+                    detailRow.querySelector('.productQuantity').textContent = order[productID][colorSize].qty;
+                    detailRow.querySelector('.productPrice .value-container').textContent = order[productID][colorSize].price;
+                    detailRow.querySelector('.productTotal .value-container').textContent = totalRow;
+
+                    total += totalRow;
+
+                    orderDocFrag.appendChild( detailRow );
+                }
+            }
+
+            let orderContainer = document.querySelector(this.params.containerSelector);
+            while( orderContainer.firstElementChild !== null ){
+                orderContainer.firstElementChild.remove();
+            }
+
+            this.setTotalPrice(total);
+            this.setBillingAddress( addressObserver.getSelectedAddress() );
+            orderContainer.appendChild(orderDocFrag);
+        }
+    }
+
+    setTotalPrice( total ){
+        document.querySelector(this.params.totalPriceContainerSelector).textContent = total;
+    }
+
+    setBillingAddress( address ){
+        document.querySelector( this.params.shippingAddressSelector ).innerHTML = address;
+    }
+}
+
+/**
+ * Static class that allow to show and hide a loader icon
+ */
+class LoaderIconManager{
+    static show( loaderSelector ){
+        document.querySelector(loaderSelector).style.display = '';
+    }
+
+    static hide( loaderSelector ){
+        document.querySelector(loaderSelector).style.display = 'none';
+    }
+}
+
+/**
+ * Select Replacement
+ * Select replacement is a simple component to be able to design a selectbox
+ * while maintaining the normal API for smartphones
+ * To work properly, the select node must be a child of the specified selector (.select-replacement by default)
+ */
+class SelectReplacement{
+    constructor( params = {} ){
+        this.params = {
+            selector: '.select-replacement',
+            optionsContainerSelector: '.select-replacement-options',
+            optionSelector: '.select-replacement-option',
+            openClass: 'open',
+            visibleOptions: 5
+        };
+
+        for(let param in params){
+            if( param in this.params ){
+                this.params[param] = params[param];
+            }
+        }
+
+        document.querySelectorAll( this.params.selector+' select' ).forEach(( selectNode ) => {
+            selectNode.selectReplacementInst = this;
+            selectNode.addEventListener('mousedown', this.open);
+        });
+
+        document.querySelectorAll( this.params.optionsContainerSelector ).forEach(( optionsContainer ) => {
+            optionsContainer.addEventListener('mousedown', (e) => e.stopImmediatePropagation());
+            optionsContainer.addEventListener('click', this.selectOption);
+        });
+    }
+
+    open( e ) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        if(  e.which === 1  ){
+            let parent = this.parentNode;
+
+            if (parent.classList.contains(this.selectReplacementInst.params.openClass)) {
+                this.selectReplacementInst.close( parent.querySelector( this.selectReplacementInst.params.optionsContainerSelector ), this.selectReplacementInst );
+            }
+            else {
+                parent.classList.add(this.selectReplacementInst.params.openClass);
+                let visibleOptions = this.selectReplacementInst.params.visibleOptions > this.options.length ? this.options.length : this.selectReplacementInst.params.visibleOptions;
+                let option = parent.querySelector(this.selectReplacementInst.params.optionSelector);
+                let optionHeight = 0;
+
+                if (option !== null) {
+                    optionHeight = option.offsetHeight;
+                } else {
+                    throw new Error('No option in the select-replacement');
+                }
+                let heightToGo = visibleOptions * optionHeight;
+
+                let openOptions = parent.querySelector(this.selectReplacementInst.params.optionsContainerSelector);
+                openOptions.style.height = heightToGo + 'px';
+                document.body.addEventListener('mousedown', () => {
+                    this.selectReplacementInst.close(openOptions, this.selectReplacementInst)
+                }, {once: true});
+            }
+        }
+    }
+
+    selectOption( e ){
+        this.previousElementSibling.value = e.target.dataset.value;
+        this.previousElementSibling.dispatchEvent(new Event('change'));
+        this.previousElementSibling.selectReplacementInst.close( this,  this.previousElementSibling.selectReplacementInst);
+    }
+
+    close( nodeToClose, inst ){
+        nodeToClose.style.height = '0';
+        nodeToClose.closest( inst.params.selector ).classList.remove( inst.params.openClass );
+    }
+}
+
+/* Set the list mode */
+let cookieName = document.querySelector( 'input[name="nasa_archive_grid_view"]' );
+if( cookieName !== null ){
+    cookieName = cookieName.value;
+
+    if( !CookieManager.exist(cookieName) || CookieManager.get(cookieName) !== 'list' ){
+        CookieManager.set( cookieName, 'list', '/', '', 60 * 60 * 24 * 7 );
+
+        document.querySelector('.nasa-content-page-products > ul').className = 'products large-block-grid-3 small-block-grid-1 medium-block-grid-2 list';
+    }
+}
 
 let priceUpdater = new PriceUpdater();
 let customObserver = new CustomObserver();
 let quantityObserver = new QuantityObserver();
 let retailSaver = new RetailSaver();
 let productDetailsManager = new ProductDetails();
+let saveOrderButton = new SaveOrderButton();
+let modalHandler = new ModalHandler();
+let addressObserver = new AddressObserver();
+new StepsSwitcher();
+let recapManager = new OrderRecapManager();
+new SelectReplacement();

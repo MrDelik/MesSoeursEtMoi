@@ -4,6 +4,12 @@ if( !current_user_can('administrator') || !is_user_logged_in() || get_user_meta(
 	exit;
 }
 
+/**
+ * Reemove the choice color and sizeee button
+ * To place them to some other place
+ */
+remove_action('woocommerce_before_shop_loop_item_title', array(Nasa_WC_Attr_UX::getInstance(), 'product_content_variations_color_label'), 99);
+
 $addressesPrefix = get_user_meta(get_current_user_id(), 'wc_address_book', true);
 
 $BillingAddresses = [];
@@ -102,8 +108,10 @@ if ( $featured_products ) {
 				<?php do_action( 'woocommerce_before_shop_loop_item_title' ); ?>
 			</div>
 
-			<div id='retailer-noPointerEvent' class="product-info-wrap info" style='pointer-events:none;'>
+<!--			<div id='retailer-noPointerEvent' class="product-info-wrap info" style='pointer-events:none;'>-->
+			<div class="product-info-wrap info">
 				<?php do_action( 'woocommerce_shop_loop_item_title', $cat_info ); ?>
+				<?php Nasa_WC_Attr_UX::getInstance()->product_content_variations_color_label() ?>
 				<?php do_action( 'woocommerce_after_shop_loop_item_title', $description_info ); ?>
 			</div>
 			<?php

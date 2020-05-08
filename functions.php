@@ -32,6 +32,7 @@ function theme_enqueue_styles_and_scripts() {
 	    wp_enqueue_script('elessi-retailer-custom-page-js', get_stylesheet_directory_uri() . '/assets/js/retailerPage.js', [], true , true);
 	    wp_enqueue_script('elessi-sweetalert2js', get_stylesheet_directory_uri() . '/assets/js/sweetalert2.all.min.js', [], true , true);
 	    wp_enqueue_style('elessi-sweetalert2css', get_stylesheet_directory_uri() . '/assets/css/sweetalert2.min.css', [], true);
+	    wp_enqueue_style('elessi-retailer-shop', get_stylesheet_directory_uri() . '/assets/css/retailershop.css', [], true);
 	}
 }
 add_action('wp_enqueue_scripts', 'theme_enqueue_styles_and_scripts', 998);

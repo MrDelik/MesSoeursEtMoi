@@ -29,9 +29,12 @@ class CustomObserver{
 
     toggleInformation(button){
         let valueContainer = this.getParent(button).querySelector(this.params.valueContainerSelectorPart + button.dataset.pa);
-        valueContainer.textContent = button.dataset.value;
+        if( button.dataset.pa === 'size' ){
+            valueContainer.textContent = button.dataset.value;
+        }
+        else if( button.dataset.pa === 'color' ){
+            valueContainer.style.backgroundColor = button.dataset.value;
 
-        if( button.dataset.pa === 'color' ){
             priceUpdater.updatePrice(
                 this.getParent(button),
                 button.dataset.value
@@ -281,7 +284,7 @@ class Product{
         return this.row.querySelector( this.params.unitPriceSelector ).textContent.trim();
     }
     getColor(){
-        return this.row.querySelector( this.params.colorSelector ).textContent.trim();
+        return this.row.querySelector( this.params.colorSelector ).style.backgroundColor;
     }
     getSize(){
         return this.row.querySelector( this.params.sizeSelector ).textContent.trim();

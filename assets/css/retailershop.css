@@ -49,3 +49,26 @@ div.nasa-product-content-nasa_label-wrap div.nasa-product-content-size-wrap-chil
 div.nasa-product-content-nasa_label-wrap div.nasa-product-content-size-wrap-child .nasa-attr-ux-nasa_label + .nasa-attr-ux-nasa_label{
     margin-left:6px;
 }
+
+.retailer-product-selected{
+    list-style: none;
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    padding:0;
+    margin:8px 0;
+    width:100%;
+}
+.selected-color{
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    display:inline-block;
+    vertical-align: middle;
+}
+
+/* disable pointer events to prevent the click on some elements */
+.product-img,
+.product-info-wrap .name{
+    pointer-events: none;
+}

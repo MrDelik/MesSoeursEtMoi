@@ -24,15 +24,18 @@ if( !function_exists('debug') ){
 /**
  *	Register all scripts and styles for this child theme
  */
-function theme_enqueue_styles() {
+function theme_enqueue_styles_and_scripts() {
     wp_enqueue_style('elessi-style', get_template_directory_uri() . '/style.css');
     wp_enqueue_style('elessi-child-style', get_stylesheet_uri());
 
     if(is_tax('retailer')){
 	    wp_enqueue_script('elessi-retailer-custom-page-js', get_stylesheet_directory_uri() . '/assets/js/retailerPage.js', [], true , true);
+	    wp_enqueue_script('elessi-sweetalert2js', get_stylesheet_directory_uri() . '/assets/js/sweetalert2.all.min.js', [], true , true);
+	    wp_enqueue_style('elessi-sweetalert2css', get_stylesheet_directory_uri() . '/assets/css/sweetalert2.min.css', [], true);
+	    wp_enqueue_style('elessi-retailer-shop', get_stylesheet_directory_uri() . '/assets/css/retailershop.css', [], true);
 	}
 }
-add_action('wp_enqueue_scripts', 'theme_enqueue_styles', 998);
+add_action('wp_enqueue_scripts', 'theme_enqueue_styles_and_scripts', 998);
 
 require __DIR__  . DIRECTORY_SEPARATOR . 'postTypes'  . DIRECTORY_SEPARATOR . 'collectionPostType.php';
 
@@ -163,7 +166,12 @@ function retailer() {
 		'public' => false,
 		'show_ui' => true,
 		'supports' => ['title', 'author'],
-		'register_meta_box_cb' => 'registerRetailerOrderMetaBoxes'
+		'register_meta_box_cb' => 'registerRetailerOrderMetaBoxes',
+		'menu_position' => 56,
+		'map_meta_cap' => true,
+		'capabilities' => [
+			'create_posts' => false
+		]
 	];
 	register_post_type('retailer_order', $postTypeArgs);
 }
@@ -171,9 +179,134 @@ add_action( 'init', 'retailer', 0 );
 
 /**
  * register all the meta boxes here for the retailer orders
+ * @param WP_Post $post
  */
-function registerRetailerOrderMetaBoxes(){
+function registerRetailerOrderMetaBoxes( WP_Post $post ){
+	wp_enqueue_style(
+		'retailer-order-style',
+		get_stylesheet_directory_uri().'/assets/css/admin-retailer-order.css',
+		[],
+		true
+	);
 
+	add_meta_box(
+		'retailer_order_total',
+		__('Total', 'woocommerce'),
+		'messoeursetmoi_render_order_total',
+		null,
+		'side',
+		'default',
+		[$post]
+	);
+
+	add_meta_box(
+		'retailer_order_addresses',
+		__('Addresses', 'woocommerce'),
+		'messoeursetmoi_render_order_address',
+		null,
+		'advanced',
+		'default',
+		[$post]
+	);
+
+	add_meta_box(
+		'retailer_order_products',
+		__('Order products', 'woocommerce'),
+		'messoeursetmoi_render_order_products',
+		null,
+		'advanced',
+		'high',
+		[$post]
+	);
+}
+
+/**
+ * Render the order total meta box content
+ * @param WP_Post $post
+ */
+function messoeursetmoi_render_order_total( WP_Post $post ){
+	$orderInfos = get_post_meta( $post->ID, '_order', true );
+	$currency = '€';
+
+	$total = 0;
+	foreach( $orderInfos as $prods ){
+		foreach( $prods as $prod ){
+			$total += (float)$prod['qty'] * (float)$prod['price'];
+		}
+	}
+
+	echo '
+		<div class="total-container">'.$total.$currency.'</div>
+	';
+}
+
+/**
+ * Render the addresses related to the oder in the meta box
+ * @param WP_Post $post
+ */
+function messoeursetmoi_render_order_address( WP_Post $order ){
+	global $woocommerce;
+
+	$billingAddress = get_post_meta($order->ID, '_billing_address', true);
+	$shippingAddress = get_post_meta($order->ID, '_shipping_address', true);
+
+	echo '
+		<div class="addresses-container">
+			<div class="address">
+				<h2>'.__('Billing address', 'woocommerce').'</h2>
+				<address>
+					'.$woocommerce->countries->get_formatted_address($billingAddress).'
+				</address>
+				' . (!empty($billingAddress['phone']) ? '<div class="phoneNbr">'.$billingAddress['phone'].'</div>' : '') . '
+				' . (!empty($billingAddress['email']) ? '<div class="phoneNbr">'.$billingAddress['email'].'</div>' : '') . '
+			</div>
+			<div class="address">
+				<h2>'.__('Shipping address', 'woocommerce').'</h2>
+				<address>
+					'.$woocommerce->countries->get_formatted_address($shippingAddress).'
+				</address>
+				' . (!empty($shippingAddress['phone']) ? '<div class="phoneNbr">'.$shippingAddress['phone'].'</div>' : '') . '
+				' . (!empty($shippingAddress['email']) ? '<div class="phoneNbr">'.$shippingAddress['email'].'</div>' : '') . '
+			</div>
+		</div>
+	';
+}
+
+/**
+ * Render the meta box content
+ * @param WP_Post $post
+ */
+function messoeursetmoi_render_order_products( WP_Post $post){
+	require_once __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'Retailer_Order_Product_Table.php';
+
+	$orderInfos = get_post_meta($post->ID, '_order', true);
+
+	$products = wc_get_products([
+		'include' => array_keys($orderInfos)
+	]);
+
+	$productsArr = [];
+	foreach( $products as $product ){
+		$prodInfos = $orderInfos[$product->get_id()];
+
+		foreach($prodInfos as $sizeColor => $prod){
+			list($size, $color) = explode('-', $sizeColor);
+
+			$productsArr[] = [
+				'id' => $product->get_id(),
+				'product' => $product->get_name() . ' - ' . $size . ' - ' . $color,
+				'quantity' => $prod['qty'],
+				'price' => $prod['price'],
+				'total' => (float)$prod['qty'] * (float)$prod['price']
+			];
+
+		}
+	}
+
+	$productsTable = new Retailer_Order_Product_Table();
+	$productsTable->items = $productsArr;
+	$productsTable->prepare_items();
+	$productsTable->display();
 }
 
 
@@ -192,7 +325,6 @@ function custom_pre_get_posts_query( $q ) {
             'operator' => 'NOT IN',
            ) 
     );
-
 
     $q->set( 'tax_query', $tax_query );
 
@@ -262,3 +394,118 @@ function bbloomer_add_custom_field_variation_data( $variations ) {
 	return $variations;
 }
 add_filter( 'woocommerce_available_variation', 'bbloomer_add_custom_field_variation_data' );
+
+/**
+ * Save the retailer order via ajax
+ * Need to verify the nonce for security
+ */
+function saveRetailerOrder(){
+	$nonceChecked = check_ajax_referer('saveRetailerOrder');
+
+	if( $nonceChecked === false ){
+		die('Nonce not valid');
+	}
+
+	if( !array_key_exists('retailerProducts', $_COOKIE) ){
+		die('No retailer order to validate');
+	}
+
+	global $woocommerce;
+	$userID = get_current_user_id();
+	$prefix = $_POST['selectedBillingAddress'];
+
+	$billingAddress = [
+		'first_name' => get_user_meta($userID, $prefix.'_first_name', true),
+		'last_name' => get_user_meta($userID, $prefix.'_last_name', true),
+		'company' => get_user_meta($userID, $prefix.'_company', true),
+		'address_1' => get_user_meta($userID, $prefix.'_address_1', true),
+		'address_2' => get_user_meta($userID, $prefix.'_address_2', true),
+		'city' => get_user_meta($userID, $prefix.'_city', true),
+		'postcode' => get_user_meta($userID, $prefix.'_postcode', true),
+		'country' => get_user_meta($userID, $prefix.'_country', true),
+		'state' => get_user_meta($userID, $prefix.'_state', true),
+		'phone' => get_user_meta($userID, $prefix.'_phone', true),
+		'email' => get_user_meta($userID, $prefix.'_email', true)
+	];
+	$shippingAddress = [
+		'first_name' => $woocommerce->customer->get_billing_first_name(),
+		'last_name' => $woocommerce->customer->get_billing_last_name(),
+		'company' => $woocommerce->customer->get_billing_company(),
+		'address_1' => $woocommerce->customer->get_billing_address_1(),
+		'address_2' => $woocommerce->customer->get_billing_address_2(),
+		'city' => $woocommerce->customer->get_billing_city(),
+		'postcode' => $woocommerce->customer->get_billing_postcode(),
+		'country' => $woocommerce->customer->get_billing_country(),
+		'state' => $woocommerce->customer->get_billing_state(),
+		'phone' => $woocommerce->customer->get_billing_phone(),
+		'email' => $woocommerce->customer->get_billing_email()
+	];
+
+	/* decode the order to store it in meta */
+	$order = json_decode(stripslashes($_COOKIE['retailerProducts']), true);
+	$currentDate = new DateTime();
+
+	$order_id = wp_insert_post([
+		'post_type' => 'retailer_order',
+		'post_author' => $userID,
+		'post_title' => 'Retailer order at '.$currentDate->format('d/m/Y').' at '.$currentDate->format('H:i:s'),
+		'meta_input' => [
+			'_order' => $order,
+			'_billing_address' => $billingAddress,
+			'_shipping_address' => $shippingAddress
+		]
+	]);
+
+	if( is_wp_error($order_id) ){
+		$response = [
+			'result' => 'error',
+			'message' => $order_id->get_error_message()
+		];
+	}
+	else{
+		$response = [
+			'result' => 'success',
+			'message' => __('Commande créée avec succès', 'elessi-theme')
+		];
+
+		$emails = [get_bloginfo('admin_email')];
+		if( !empty($_POST['getCopy']) ){
+			$currentUser = wp_get_current_user();
+			$emails[] = $currentUser->user_email;
+		}
+
+		do_action('send_messoeursetmoi_retailer_order_validated', $order_id, implode(',', $emails));
+	}
+
+	/* return the reponse as json */
+	wp_send_json( $response );
+}
+add_action('wp_ajax_save_retailer_order', 'saveRetailerOrder');
+
+/**
+ *  Add a custom email to the list of emails WooCommerce should load
+ *
+ * @since 0.1
+ * @param array $email_classes available email classes
+ * @return array filtered available email classes
+ */
+function add_expedited_order_woocommerce_email( $email_classes ) {
+
+	// include our custom email class
+	require( 'includes/class-wc-retailer-order-email.php' );
+
+	// add the email class to the list of email classes that WooCommerce loads
+	$email_classes['WC_Expedited_Order_Email'] = new WC_Retailer_Order_Email();
+
+	return $email_classes;
+
+}
+add_filter( 'woocommerce_email_classes', 'add_expedited_order_woocommerce_email' );
+
+function elessi_register_retailer_order_validated_action( $actions ) {
+
+	$actions[] = 'send_messoeursetmoi_retailer_order_validated';
+
+	return $actions;
+}
+add_filter( 'woocommerce_email_actions', 'elessi_register_retailer_order_validated_action');

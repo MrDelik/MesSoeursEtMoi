@@ -34,7 +34,7 @@ $isRetailer = get_user_meta(get_current_user_id(), 'isRetailer', true);
                 <?php echo $topbar_left; ?>
 	            <?php endif; ?>
             </div>
-            <div class="topbar-menu-container hidden-tag">
+            <div id='noFlag' class="topbar-menu-container hidden-tag">
                 <?php do_action('nasa_support_multi_languages'); ?>
                 <?php elessi_get_menu('topbar-menu', 'nasa-topbar-menu', 1); ?>
             </div>

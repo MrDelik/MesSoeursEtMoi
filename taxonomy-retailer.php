@@ -11,6 +11,7 @@ if( !current_user_can('administrator') || !is_user_logged_in() || get_user_meta(
 remove_action('woocommerce_before_shop_loop_item_title', array(Nasa_WC_Attr_UX::getInstance(), 'product_content_variations_color_label'), 99);
 
 $addressesPrefix = get_user_meta(get_current_user_id(), 'wc_address_book', true);
+$addressesPrefix = is_array($addressesPrefix) ? $addressesPrefix : [$addressesPrefix];
 
 $BillingAddresses = [];
 $userID = get_current_user_id();
@@ -173,7 +174,7 @@ if ( $featured_products ) {
 								<div id="<?=$sizeColor[0]?>-<?=$sizeColor[1]?>-<?=get_the_id()?>" class="productDetailsRow" style="display:flex;justify-content:space-between;align-items;center;width:100%;">
 									<div style="display:flex;justify-content:space-between;align-items:center;width:100%;">
 										<div>
-											<span class="product-color bullet-color" style="background-color:<?=$sizeColor[0]?>;"></span>
+											<span class="product-color bullet-color" style="background-color:<?=$retailerProduct['colorCode']?>;"><?=$sizeColor[0]?></span>
 											<span class="product-size"><?=$sizeColor[1]?></span>
 											<span class="product-Qty"><?=$retailerProduct['qty']?></span>
 											<span class="product-multiplicator-sign">*</span>

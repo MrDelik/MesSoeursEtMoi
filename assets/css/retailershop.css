@@ -65,6 +65,10 @@ div.nasa-product-content-nasa_label-wrap div.nasa-product-content-size-wrap-chil
     border-radius:50%;
     display:inline-block;
     vertical-align: middle;
+    font-size:0;
+}
+.bullet-color{
+    font-size:0;
 }
 
 /* disable pointer events to prevent the click on some elements */

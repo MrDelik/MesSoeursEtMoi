@@ -85,16 +85,16 @@ function my_phpmailer_configuration( $phpmailer ) {
 	$phpmailer->isSMTP();
 //	$phpmailer->SMTPDebug = SMTP::DEBUG_SERVER;
 //	$phpmailer->SMTPDebug = 2; //Alternative to above constant
-//	$phpmailer->SMTPSecure = false;
-//	$phpmailer->SMTPAutoTLS = false;
+	$phpmailer->SMTPSecure = true;
+	$phpmailer->SMTPAutoTLS = true;
 	$phpmailer->Host = 'mail.infomaniak.com';
 	$phpmailer->SMTPAuth = true; // Indispensable pour forcer l'authentification
 	$phpmailer->Port = 587;
 	$phpmailer->Username = 'webmaster@eyecone.com';
-	$phpmailer->Password = 'mN5F_KVnlYhf';
+	$phpmailer->Password = 'WD7QamGNU*jsxuk7Bonjour';
 
 	// Configurations complémentaires
-//	$phpmailer->SMTPSecure = "none"; // Sécurisation du serveur SMTP : ssl ou tls
+	$phpmailer->SMTPSecure = "tls"; // Sécurisation du serveur SMTP : ssl ou tls
 	$phpmailer->From = "webmaster@eyecone.com"; // Adresse email d'envoi des mails
 	$phpmailer->FromName = "Eyecone"; // Nom affiché lors de l'envoi du mail
 }

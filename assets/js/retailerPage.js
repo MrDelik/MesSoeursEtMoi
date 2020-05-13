@@ -33,7 +33,8 @@ class CustomObserver{
             valueContainer.textContent = button.dataset.value;
         }
         else if( button.dataset.pa === 'color' ){
-            valueContainer.style.backgroundColor = button.dataset.value;
+            valueContainer.style.backgroundColor = button.firstElementChild.style.backgroundColor;
+            valueContainer.textContent = button.dataset.value;
 
             priceUpdater.updatePrice(
                 this.getParent(button),
@@ -146,7 +147,8 @@ class RetailSaver{
             customObserver.getParent(e.target),
             {
                 id: product.getId(),
-                color : product.getColor(),
+                colorName: product.getColorName(),
+                colorCode : product.getColorCode(),
                 size : product.getSize(),
                 qty : product.getQty(),
                 unitprice : product.getUnitPrice(),
@@ -156,17 +158,18 @@ class RetailSaver{
 
         let productToStringify = {};
         productToStringify[product.getId()] = {};
-        productToStringify[product.getId()][product.getColor()+'-'+product.getSize()] = {
+        productToStringify[product.getId()][product.getColorName()+'-'+product.getSize()] = {
             qty: product.getQty(),
-            price: product.getUnitPrice()
+            price: product.getUnitPrice(),
+            colorCode : product.getColorCode()
         };
 
         if( CookieManager.exist('retailerProducts') ){
             let existingCookie = JSON.parse(CookieManager.get('retailerProducts'));
-            let colorSize = product.getColor()+'-'+product.getSize();
+            let colorSize = product.getColorName()+'-'+product.getSize();
 
             if( product.getId() in existingCookie ){
-                existingCookie[product.getId()][colorSize]  =  productToStringify[product.getId()][colorSize];
+                existingCookie[product.getId()][colorSize] = productToStringify[product.getId()][colorSize];
             }
             else{
                 existingCookie[product.getId()] = productToStringify[product.getId()];
@@ -231,7 +234,8 @@ class ProductDetails{
      * @returns {*}
      */
     applyDetails(elem, infos){
-        elem.querySelector('.product-color').style.backgroundColor = infos.color;
+        elem.querySelector('.product-color').style.backgroundColor = infos.colorCode;
+        elem.querySelector('.product-color').textContent = infos.colorName;
         elem.querySelector('.product-size').textContent = infos.size;
         elem.querySelector('.product-Qty').textContent = infos.qty;
         elem.querySelector('.product-unit-price').textContent = infos.unitprice;
@@ -283,7 +287,10 @@ class Product{
     getUnitPrice(){
         return this.row.querySelector( this.params.unitPriceSelector ).textContent.trim();
     }
-    getColor(){
+    getColorName(){
+        return this.row.querySelector( this.params.colorSelector ).textContent.trim();
+    }
+    getColorCode(){
         return this.row.querySelector( this.params.colorSelector ).style.backgroundColor;
     }
     getSize(){

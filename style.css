@@ -28,18 +28,17 @@ Version: 1.0
     align-items: center;
 }
 
-
-
-
 /****************************************************************** COLLECTION ************************************************************************************/
 #collectionContainer {
     display: flex;
     flex-wrap: wrap;
     width:100%;
+    max-width: 1200px;
+    margin:auto;
 }
 
 .collectionArticle {
-    flex-basis: 350px;
+    flex-basis: 250px;
     flex-grow: 2;
     flex-shrink: 1;
     position: relative;
@@ -47,6 +46,7 @@ Version: 1.0
     background-position: center;
     background-repeat: no-repeat;
     transition-delay: 0s;
+    margin:1rem;
 }
 .collectionArticle > * {
     transition-delay: 0s;
@@ -100,6 +100,14 @@ Version: 1.0
 
 .nav-post-title {
     margin:1rem;
+}
+
+/* COLLECTION PAGE GALLERY*/
+.collection-template-default .content-area {
+    padding:16px 0;
+    width:100%;
+    max-width: 1200px;
+    margin:auto;
 }
 
 
@@ -157,6 +165,78 @@ Version: 1.0
     width:15px;
     height:15px;
     border-radius:50%;
+}
+
+
+.nasa-logo-img {
+    padding:1rem 1rem 1rem 0;
+}
+
+.nasa-left-main-header {
+    width:80%;
+}
+.nasa-right-main-header {
+    flex-basis: 20%;
+    flex-shrink: 1;
+}
+
+.nasa-left-main-header {
+    flex-basis: 80%;
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-grow: 1;
+}
+
+.fa-facebook.menu-item , .fa-instagram.menu-item {
+    font-size: 0 !important;
+}
+
+.topbar-menu-container .nasa-select-languages img {
+    display:none;
+}
+
+#contactPageForm {
+    display: flex;
+    flex-wrap: wrap;
+    padding:3rem 0;
+    padding:1rem;
+}
+#contactPageForm label{
+    font-size:1.2rem;
+}
+#contactPageForm textarea{
+    height: 10em;
+}
+
+#contactPageForm input{
+    flex-basis: 100%;
+    margin: 0;
+    height: 100%;
+    margin:0.5rem 0;
+}
+#contactPageForm > div{
+    flex-basis: 100%;
+}
+#contactPageForm .name  {
+    flex-basis: 550px;
+    flex-grow: 1;
+}
+#contactPageForm .email  {
+    flex-basis: 550px;
+    flex-grow: 1;
+}
+@media screen and (min-width:1150px) {
+    #contactPageForm {
+    padding:0rem;
+}
+    
+    #contactPageForm .name  {
+    margin-right:0.25rem;
+}
+#contactPageForm .email  {
+    margin-left:0.25rem;
+}
 }
 
 /* custom input container */
@@ -486,3 +566,4 @@ table.table-responsive td::before{
         color:var(--main-white);
     }
 }
+

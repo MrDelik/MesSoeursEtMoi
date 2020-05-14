@@ -516,3 +516,14 @@ function changeSizeguiePlace(){
 	remove_action('woocommerce_single_product_summary', 'nasa_size_guide' ,35);
 	add_action('woocommerce_single_product_summary', 'nasa_size_guide', 29);
 }
+
+function addSizeToName( $productName, $cart_item = null, $cart_item_key = null ){
+	$name = explode(',', $productName);
+	if( !empty($name[1]) ){
+		return $name[0] . ', Size: '.$name[1];
+	}
+	else{
+		return $name[0];
+	}
+}
+add_filter('woocommerce_cart_item_name', 'addSizeToName');

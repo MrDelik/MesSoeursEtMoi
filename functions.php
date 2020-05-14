@@ -509,3 +509,10 @@ function elessi_register_retailer_order_validated_action( $actions ) {
 	return $actions;
 }
 add_filter( 'woocommerce_email_actions', 'elessi_register_retailer_order_validated_action');
+
+/* Removing the action of the size guide to re add it to show it before the add to cart */
+add_action('after_setup_theme', 'changeSizeguiePlace');
+function changeSizeguiePlace(){
+	remove_action('woocommerce_single_product_summary', 'nasa_size_guide' ,35);
+	add_action('woocommerce_single_product_summary', 'nasa_size_guide', 29);
+}

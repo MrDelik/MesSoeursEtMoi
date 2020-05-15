@@ -519,6 +519,7 @@ function changeSizeguiePlace(){
 
 
 
+
 /**
  * Replace the home link URL FOR ELESSI BREADRUMB
  */
@@ -526,3 +527,15 @@ add_filter( 'woocommerce_breadcrumb_home_url', 'woo_custom_breadrumb_home_url' )
 function woo_custom_breadrumb_home_url() {
     return get_home_url() . '/shop/';
 }
+
+function addSizeToName( $productName, $cart_item = null, $cart_item_key = null ){
+	$name = explode(',', $productName);
+	if( !empty($name[1]) ){
+		return $name[0] . ', Size: '.$name[1];
+	}
+	else{
+		return $name[0];
+	}
+}
+add_filter('woocommerce_cart_item_name', 'addSizeToName');
+

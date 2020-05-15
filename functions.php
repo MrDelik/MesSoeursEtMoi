@@ -516,3 +516,13 @@ function changeSizeguiePlace(){
 	remove_action('woocommerce_single_product_summary', 'nasa_size_guide' ,35);
 	add_action('woocommerce_single_product_summary', 'nasa_size_guide', 29);
 }
+
+
+
+/**
+ * Replace the home link URL FOR ELESSI BREADRUMB
+ */
+add_filter( 'woocommerce_breadcrumb_home_url', 'woo_custom_breadrumb_home_url' );
+function woo_custom_breadrumb_home_url() {
+    return get_home_url() . '/shop/';
+}

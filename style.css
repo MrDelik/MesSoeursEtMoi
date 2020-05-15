@@ -9,10 +9,35 @@ Version: 1.0
 */
 
 
+
+/* Price Variation no padding */ 
+.woocommerce-variation-price:empty{
+    padding:0 !important;
+}
+
 /* Bouton effacer display none */
+
 
 .reset_variations {
     display:none !important;
+}
+
+.quantity .input-text.qty {
+    color:#505050;
+}
+
+.col2-set.addresses .edit , .woocommerce-MyAccount-content p a {
+    color: #e3cd70 !important;
+}
+.woocommerce-MyAccount-content p a:hover {
+    text-decoration: underline;
+}
+
+.shop_table.my_account_orders tbody td.woocommerce-orders-table__cell-order-actions .button {
+    padding: 0.75rem;
+}
+.shop_table.my_account_orders tbody td.woocommerce-orders-table__cell-order-actions .button:hover {
+    color:white !important;
 }
 
 /*************** ADD YOUR CUSTOM CSS IN THIS AREA ***************/
@@ -351,6 +376,11 @@ Version: 1.0
     padding:3rem 0;
     padding:1rem;
 }
+#contactPageForm p {
+    text-align: center;
+    width: 100%;
+}
+
 #contactPageForm label{
     font-size:1.2rem;
 }

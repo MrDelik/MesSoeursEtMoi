@@ -10,9 +10,17 @@ Version: 1.0
 
 
 
-/* Price Variation no padding */ 
+/* Price Variation no padding & card opacity when no color selected*/ 
 .woocommerce-variation-price:empty{
     padding:0 !important;
+}
+
+.variations_form .woocommerce-variation-add-to-cart-disabled {
+    opacity: 1;
+}
+
+#submit.disabled, #submit[disabled], button.disabled, button[disabled], .button.disabled, .button[disabled], input[type="submit"].disabled, input[type="submit"][disabled] {
+       opacity: 1; 
 }
 
 /* Bouton effacer display none */

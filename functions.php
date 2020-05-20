@@ -91,7 +91,7 @@ function my_phpmailer_configuration( $phpmailer ) {
 	$phpmailer->SMTPAuth = true; // Indispensable pour forcer l'authentification
 	$phpmailer->Port = 587;
 	$phpmailer->Username = 'webmaster@eyecone.com';
-	$phpmailer->Password = 'WD7QamGNU*jsxuk7Bonjour';
+	$phpmailer->Password = 'oXdINYiS_5Vb';
 
 	// Configurations complémentaires
 	$phpmailer->SMTPSecure = "tls"; // Sécurisation du serveur SMTP : ssl ou tls

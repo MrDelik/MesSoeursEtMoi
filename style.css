@@ -194,15 +194,20 @@ Version: 1.0
     
 }
 
-.products.list .product-warp-item .product-item .product-img-wrap .nasa-product-content-variable-warp .nasa-product-content-nasa_color-wrap .nasa-product-content-child:first-child a, .products.list .product-warp-item .product-item .product-img-wrap .nasa-product-content-variable-warp .nasa-product-content-nasa_image-wrap .nasa-product-content-child:first-child a {
+
+.product-info .variations .value .nasa-attr-ux_wrap .nasa-attr-ux.nasa-attr-ux-color, .product-info .variations .value .nasa-attr-ux_wrap .nasa-attr-ux.nasa-attr-ux-image {
+    min-width: 70px;
+}
+
+.product-warp-item .product-item .product-img-wrap .nasa-product-content-variable-warp .nasa-product-content-nasa_color-wrap .nasa-product-content-child:first-child a, .products.list .product-warp-item .product-item .product-img-wrap .nasa-product-content-variable-warp .nasa-product-content-nasa_image-wrap .nasa-product-content-child:first-child a {
     margin:0 !important;
 }
 
-.products.list .product-warp-item .product-item .product-img-wrap .nasa-product-content-variable-warp .nasa-product-content-nasa_color-wrap .nasa-product-content-child:first-child a, .products.list .product-warp-item .product-item .product-img-wrap .nasa-product-content-variable-warp .nasa-product-content-nasa_image-wrap .nasa-product-content-child:first-child a:first-of-type {
+.product-warp-item .product-item .product-img-wrap .nasa-product-content-variable-warp .nasa-product-content-nasa_color-wrap .nasa-product-content-child:first-child a, .products.list .product-warp-item .product-item .product-img-wrap .nasa-product-content-variable-warp .nasa-product-content-nasa_image-wrap .nasa-product-content-child:first-child a:first-of-type {
     margin-right:6px !important;
 }
 
-.products.list .product-warp-item .product-item .product-img-wrap .nasa-product-content-variable-warp .nasa-product-content-nasa_color-wrap, .products.list .product-warp-item .product-item .product-img-wrap .nasa-product-content-variable-warp .nasa-product-content-nasa_image-wrap {
+.product-warp-item .product-item .product-img-wrap .nasa-product-content-variable-warp .nasa-product-content-nasa_color-wrap, .product-warp-item .product-item .product-img-wrap .nasa-product-content-variable-warp .nasa-product-content-nasa_image-wrap {
     position: relative !important;
     width:100% !important;
     visibility: visible !important;;
@@ -210,14 +215,27 @@ Version: 1.0
     left:0 !important;
     right:0 !important;
     min-height: 30px;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+    align-items: center;
 }
 
-.products.list .product-warp-item .product-item .product-img-wrap .nasa-product-content-variable-warp .nasa-product-content-nasa_label-wrap {
+.name.nasa-show-one-line a {
+    font-weight: bold !important;
+    font-size: 125%;
+}
+.name.nasa-show-one-line  {
+    padding-top:0 !important;
+}
+
+.product-warp-item .product-item .product-img-wrap .nasa-product-content-variable-warp .nasa-product-content-nasa_label-wrap {
     left:0 !important;
     right:0 !important;
     width:100% !important;
     visibility: visible !important;;
     opacity: 1 !important;
+    display:none;
 }
 
 
@@ -226,7 +244,7 @@ Version: 1.0
 .product-item .nasa-product-content-nasa_label-wrap {
     position: relative;
     bottom: 0px !important; 
-    left: 10px;
+    left:0;
     z-index: 6;
     visibility: visible; 
     opacity: 1; 
@@ -241,10 +259,6 @@ Version: 1.0
 
 .product-item .nasa-product-content-nasa_color-wrap .nasa-product-content-child > a.nasa-active span {
        border: 3px solid #ddd; 
-}
-
-.product-item .nasa-product-content-nasa_label-wrap {
-    left:0;
 }
 
 .product-item .nasa-product-content-nasa_label-wrap .nasa-product-content-child > a{
@@ -280,9 +294,9 @@ Version: 1.0
     transition: all ease 0.5s;
     display: inline-block;
     text-indent: -9999px;
-    width: 30px;
-    height: 30px;
-    border: 3px solid transparent;
+    width: 22px;
+    height: 22px;
+    border: 2px solid transparent;
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;
     border-radius: 50%;
@@ -448,8 +462,8 @@ Version: 1.0
     justify-content: center;
     align-items: center;
     vertical-align: middle;
-    width:20px;
-    height:20px;
+    width:25px;
+    height:25px;
     border-radius: 4px;
     border:2px solid #aaa;
     transition: background-color 0.2s ease,
@@ -464,10 +478,10 @@ Version: 1.0
 .input-container input[type="checkbox"]:checked + label span.checkbox i{
     display: initial;
 }
-.input-container input[type="checkbox"]:checked + label span.checkbox{
+/*.input-container input[type="checkbox"]:checked + label span.checkbox{
     background-color:#f76b6a;
     border:2px solid #f76b6a;
-}
+}*/
 
 .save-retailer-order-container{
     padding:6px;

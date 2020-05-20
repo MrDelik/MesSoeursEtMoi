@@ -381,6 +381,8 @@ get_header('shop');
                         while ($wp_query->have_posts()) :
                             $wp_query->the_post();
                             $postID = $post->ID;
+                            $postExcerpt =  $post->post_excerpt;
+             
 /******************************************************* ******************************/
 /******************************************************* ******************************/
     $ordering          = WC()->query->get_catalog_ordering_args();
@@ -421,7 +423,6 @@ get_header('shop');
 		 * Show Short Description info
 		 */
 		$description_info = isset( $description_info ) ? $description_info : true;
-
 		$attributes = ' data-wow="fadeInUp" data-wow-duration="1s" data-wow-delay="' . esc_attr( $_delay ) . 'ms"';
 
 		echo ( ! isset( $wrapper ) || $wrapper == 'li' ) ? '<li class="product-warp-item">' : '';
@@ -429,7 +430,7 @@ get_header('shop');
                 
 
 
-<div <?php wc_product_class( '', $product ); echo $attributes; ?> data-product-id="<?=get_the_ID()?>">
+<div <?php wc_product_class( '', $product ); echo $attributes; ?> data-product-id="<?=$postID?>">
 
 			<?php do_action( 'woocommerce_before_shop_loop_item' ); ?>
 
@@ -441,11 +442,13 @@ get_header('shop');
 			<div class="product-info-wrap info">
 				<?php do_action( 'woocommerce_shop_loop_item_title', $cat_info ); ?>
 				<?php Nasa_WC_Attr_UX::getInstance()->product_content_variations_color_label() ?>
-				<?php do_action( 'woocommerce_after_shop_loop_item_title', $description_info ); ?>
+
+                <?=$postExcerpt?>
+
 			</div>
 			<?php
-			global $product, $nasa_opt;
 
+			global $product, $nasa_opt;
 			if ( $show_in_list && ( ! isset( $nasa_opt['nasa_in_mobile'] ) || ! $nasa_opt['nasa_in_mobile'] ) ) {
 				$stock_status = $product->get_stock_status();
 				$stock_label  = $stock_status == 'outofstock' ?
@@ -499,7 +502,6 @@ get_header('shop');
 						</div>
 						
 						<?php 
-                            var_dump($postID);
                             if( array_key_exists($postID, $productsSaved) ): ?>
 							<?php foreach($productsSaved[$postID] as $sizeColor => $retailerProduct): ?>
 							<?php $sizeColor = explode('-', $sizeColor); ?>

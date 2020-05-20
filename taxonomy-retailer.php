@@ -137,11 +137,12 @@ if ( $featured_products ) {
 
 				<div class='retailer-product-command' style='padding:30px;display: flex; flex-wrap: wrap;'>
 					<div class='retailer-product-price' style='width:100%;'>
-						<span>Prix Retailer : </span><span class='retailer-price-container'>50</span> <span class='priceCurrency'>€</span>
+						<span class="retailer-info-title">Prix Retailer : </span>
+						<span class='retailer-price-container'>50</span> <span class='priceCurrency'>€</span>
 					</div>
 					<ul class="retailer-product-selected">
 						<li class="product-size">
-							<span>
+							<span class="retailer-info-title">
 								<?=__('Size', 'woocommerce')?> :
 							</span>
 							<span class="selected-size">
@@ -149,7 +150,7 @@ if ( $featured_products ) {
 							</span>
 						</li>
 						<li class="product-color">
-							<span>
+							<span class="retailer-info-title">
 								<?=__('Color', 'woocommerce')?> :
 							</span>
 							<span class="selected-color">

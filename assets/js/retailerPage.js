@@ -82,6 +82,16 @@ class PriceUpdater{
             }
         }
 
+        if( typeof price === 'string' && price.length === 0 ){
+            let priceContainer = row.querySelector('.price-wrap ins .amount');
+
+            if( priceContainer === null ){
+                priceContainer = row.querySelector('.price-wrap .amount');
+            }
+
+            price = priceContainer.lastChild.nodeValue;
+        }
+
         return price;
     }
 

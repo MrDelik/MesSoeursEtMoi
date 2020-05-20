@@ -50,11 +50,40 @@ if ( ! function_exists( 'wc_get_products' ) ) {
 	return;
 }
 
-get_header();
+get_header('shop');
+
+
+
 $ordering          = WC()->query->get_catalog_ordering_args();
 $products_per_page = 99;
 
 $featured_products = wc_get_products( array( 'status' => 'publish', 'limit' => - 1, 'return' => 'ids' ) );
+
+
+
+
+/****************************************************************** START TEST ********************************************************************************************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/****************************************************************** END TEST ********************************************************************************************/
+
+
+
+
+
 
 if ( $featured_products ) {
 	$productsSaved = [];

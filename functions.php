@@ -539,3 +539,85 @@ function addSizeToName( $productName, $cart_item = null, $cart_item_key = null )
 }
 add_filter('woocommerce_cart_item_name', 'addSizeToName');
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**************************************** HIDE TERMS THAT WE DON T WANT TO DISPLAY *******************************************************///////////////////////
+add_filter( 'get_terms', 'ts_get_subcategory_terms', 10, 3 );
+
+function ts_get_subcategory_terms( $terms, $taxonomies, $args ) {
+
+$new_terms = array();
+
+// if it is a product category and on the shop page
+if ( in_array( 'product_cat', $taxonomies ) ) {
+
+foreach ( $terms as $key => $term ) {
+
+if ( ! in_array( $term->slug, array( 'uncategorised','retailers' ) ) ) { //pass the slug name here
+$new_terms[] = $term;
+}
+}
+$terms = $new_terms;
+}
+
+return $terms;
+}
+
+
+
+add_action( 'woocommerce_product_query', 'ts_custom_pre_get_posts_query' );
+
+function ts_custom_pre_get_posts_query( $q ) {
+    $myQueried = get_queried_object();
+    
+    if(!empty($myQueried->slug) && $myQueried->slug != 'retailers' ) {
+        $tax_query = (array) $q->get( 'tax_query' );
+        $tax_query[] = array(
+        'taxonomy' => 'product_cat',
+        'field' => 'slug',
+        'terms' => array( 'uncategorised','retailers'), // Don't display products in the clothing category on the shop page.
+        'operator' => 'NOT IN'
+        );
+
+        $q->set( 'tax_query', $tax_query );
+        }
+    else {
+        $tax_query = (array) $q->get( 'tax_query' );
+
+        $tax_query[] = array(
+        'taxonomy' => 'product_cat',
+        'field' => 'slug',
+        'terms' => array( 'uncategorised',), // Don't display products in the clothing category on the shop page.
+        'operator' => 'NOT IN'
+        );
+        $q->set( 'tax_query', $tax_query );
+    }
+}

@@ -91,7 +91,7 @@ function my_phpmailer_configuration( $phpmailer ) {
 	$phpmailer->SMTPAuth = true; // Indispensable pour forcer l'authentification
 	$phpmailer->Port = 587;
 	$phpmailer->Username = 'webmaster@eyecone.com';
-	$phpmailer->Password = 'WD7QamGNU*jsxuk7Bonjour';
+	$phpmailer->Password = 'oXdINYiS_5Vb';
 
 	// Configurations complémentaires
 	$phpmailer->SMTPSecure = "tls"; // Sécurisation du serveur SMTP : ssl ou tls
@@ -517,6 +517,17 @@ function changeSizeguiePlace(){
 	add_action('woocommerce_single_product_summary', 'nasa_size_guide', 29);
 }
 
+
+
+
+/**
+ * Replace the home link URL FOR ELESSI BREADRUMB
+ */
+add_filter( 'woocommerce_breadcrumb_home_url', 'woo_custom_breadrumb_home_url' );
+function woo_custom_breadrumb_home_url() {
+    return get_home_url() . '/shop/';
+}
+
 function addSizeToName( $productName, $cart_item = null, $cart_item_key = null ){
 	$name = explode(',', $productName);
 	if( !empty($name[1]) ){
@@ -527,3 +538,4 @@ function addSizeToName( $productName, $cart_item = null, $cart_item_key = null )
 	}
 }
 add_filter('woocommerce_cart_item_name', 'addSizeToName');
+

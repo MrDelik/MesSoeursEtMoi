@@ -9,6 +9,10 @@ Version: 1.0
 */
 
 
+/* HIDE COLOR BULLETS */
+.nasa-product-content-variable-warp a {
+    opacity: 0 !important;
+}
 
 /* Price Variation no padding & card opacity when no color selected*/ 
 .woocommerce-variation-price:empty{

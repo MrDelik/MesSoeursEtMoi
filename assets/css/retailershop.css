@@ -82,12 +82,57 @@ div.nasa-product-content-nasa_label-wrap div.nasa-product-content-size-wrap-chil
 
 .save-retailer {
     padding:0.5rem 1rem;
-    font-size:0.95rem;
+    font-size:0.75rem;
     margin-top:0.5rem;
+    line-height: 1rem;
+    width:100%;
+}
+
+.removeRetailerProduct {
+    padding:0.5rem;
 }
 
 /* disable pointer events to prevent the click on some elements */
-.product-img,
 .product-info-wrap .name{
     pointer-events: none;
+}
+
+
+.retailer-info-title , label{
+    font-size:0.85rem;
+    text-transform: uppercase;
+}
+
+.retailer-price-container {
+    font-weight: 900;
+}
+
+.retailer-product-command .priceCurrency , .selected-size{
+    font-weight: 900;
+}
+
+.retailer-product-command {
+    padding:1rem;
+}
+
+.quantity {
+    text-align: right;
+    font-weight: 900;
+}
+
+.productDetailsRow div {
+    margin:0.25rem 0;
+    display: flex;
+    flex-grow: 1;
+    padding:0 0.5rem 0 0;
+}
+
+.product-size {
+    flex-grow: 1;
+    padding:0 0.25rem;
+}
+
+.product-total-price {
+    flex-grow: 1;
+    text-align: right;
 }

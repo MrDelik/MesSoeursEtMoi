@@ -471,7 +471,7 @@ get_header('shop');
                             <div class="group-btn-in-list"></div>
                         </div>-->
 
-				<div class='retailer-product-command' style='padding:30px;display: flex; flex-wrap: wrap;'>
+				<div class='retailer-product-command' style='display: flex; flex-wrap: wrap;'>
 					<div class='retailer-product-price' style='width:100%;'>
 						<span class="retailer-info-title">Prix Retailer : </span>
 						<span class='retailer-price-container'>50</span> <span class='priceCurrency'>€</span>

@@ -89,7 +89,10 @@ div.nasa-product-content-nasa_label-wrap div.nasa-product-content-size-wrap-chil
 }
 
 .removeRetailerProduct {
-    padding:0.5rem;
+    padding: 0.5rem;
+    background: #ffffff !important;
+    color: #b1b1b1 !important;
+    border-color: #b1b1b1 !important;
 }
 
 /* disable pointer events to prevent the click on some elements */

@@ -28,7 +28,7 @@ function theme_enqueue_styles_and_scripts() {
     wp_enqueue_style('elessi-style', get_template_directory_uri() . '/style.css');
     wp_enqueue_style('elessi-child-style', get_stylesheet_uri());
 
-    if(is_tax('retailer')){
+    if(is_tax('product_cat')){
 	    wp_enqueue_script('elessi-retailer-custom-page-js', get_stylesheet_directory_uri() . '/assets/js/retailerPage.js', [], true , true);
 	    wp_enqueue_script('elessi-sweetalert2js', get_stylesheet_directory_uri() . '/assets/js/sweetalert2.all.min.js', [], true , true);
 	    wp_enqueue_style('elessi-sweetalert2css', get_stylesheet_directory_uri() . '/assets/css/sweetalert2.min.css', [], true);
@@ -570,7 +570,7 @@ add_filter('woocommerce_cart_item_name', 'addSizeToName');
 
 
 /**************************************** HIDE TERMS THAT WE DON T WANT TO DISPLAY *******************************************************///////////////////////
-add_filter( 'get_terms', 'ts_get_subcategory_terms', 10, 3 );
+/*add_filter( 'get_terms', 'ts_get_subcategory_terms', 10, 3 );
 
 function ts_get_subcategory_terms( $terms, $taxonomies, $args ) {
 
@@ -589,7 +589,7 @@ $terms = $new_terms;
 }
 
 return $terms;
-}
+}*/
 
 
 

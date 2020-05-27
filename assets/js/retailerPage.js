@@ -30,16 +30,23 @@ class CustomObserver{
     toggleInformation(button){
         let valueContainer = this.getParent(button).querySelector(this.params.valueContainerSelectorPart + button.dataset.pa);
         if( button.dataset.pa === 'size' ){
-            valueContainer.textContent = button.dataset.value;
+            valueContainer.textContent = button.classList.contains('nasa-disable') || button.classList.contains('nasa-active') ? '' : button.dataset.value;
         }
         else if( button.dataset.pa === 'color' ){
-            valueContainer.style.backgroundColor = button.firstElementChild.style.backgroundColor;
-            valueContainer.textContent = button.dataset.value;
+            if( button.classList.contains('nasa-disable') || !button.classList.contains('nasa-active') ){
+                valueContainer.style.backgroundColor = 'transparent';
+                valueContainer.textContent = '';
+            }
+            else{
+                valueContainer.style.backgroundColor = button.firstElementChild.style.backgroundColor;
+                valueContainer.textContent = button.dataset.value;
 
-            priceUpdater.updatePrice(
-                this.getParent(button),
-                button.dataset.value
-            );
+                priceUpdater.updatePrice(
+                    this.getParent(button),
+                    button.dataset.value
+                );
+            }
+
         }
     }
 
@@ -153,52 +160,63 @@ class RetailSaver{
         e.preventDefault();
 
         let product = new Product({}, customObserver.getParent(e.target));
-        productDetailsManager.addDetails(
-            customObserver.getParent(e.target),
-            {
-                id: product.getId(),
-                colorName: product.getColorName(),
-                colorCode : product.getColorCode(),
-                size : product.getSize(),
-                qty : product.getQty(),
-                unitprice : product.getUnitPrice(),
-                totalprice: product.calculatePrice()
+
+        if( product.getSize() !== '' && product.getColorName() !== '' ){
+            productDetailsManager.addDetails(
+                customObserver.getParent(e.target),
+                {
+                    id: product.getId(),
+                    colorName: product.getColorName(),
+                    colorCode : product.getColorCode(),
+                    size : product.getSize(),
+                    qty : product.getQty(),
+                    unitprice : product.getUnitPrice(),
+                    totalprice: product.calculatePrice()
+                }
+            );
+
+            let productToStringify = {};
+            productToStringify[product.getId()] = {};
+            productToStringify[product.getId()][product.getColorName()+'-'+product.getSize()] = {
+                qty: product.getQty(),
+                price: product.getUnitPrice(),
+                colorCode : product.getColorCode()
+            };
+
+            if( CookieManager.exist('retailerProducts') ){
+                let existingCookie = JSON.parse(CookieManager.get('retailerProducts'));
+                let colorSize = product.getColorName()+'-'+product.getSize();
+
+                if( product.getId() in existingCookie ){
+                    existingCookie[product.getId()][colorSize] = productToStringify[product.getId()][colorSize];
+                }
+                else{
+                    existingCookie[product.getId()] = productToStringify[product.getId()];
+                }
+
+                productToStringify = existingCookie;
             }
-        );
 
-        let productToStringify = {};
-        productToStringify[product.getId()] = {};
-        productToStringify[product.getId()][product.getColorName()+'-'+product.getSize()] = {
-            qty: product.getQty(),
-            price: product.getUnitPrice(),
-            colorCode : product.getColorCode()
-        };
+            /* age set at one week from now */
+            CookieManager.set(
+                'retailerProducts',
+                JSON.stringify(productToStringify),
+                '/',
+                '',
+                60 * 60 * 24 * 7
+            );
 
-        if( CookieManager.exist('retailerProducts') ){
-            let existingCookie = JSON.parse(CookieManager.get('retailerProducts'));
-            let colorSize = product.getColorName()+'-'+product.getSize();
-
-            if( product.getId() in existingCookie ){
-                existingCookie[product.getId()][colorSize] = productToStringify[product.getId()][colorSize];
+            /* Show validation button */
+            saveOrderButton.showButton();
+        }
+        else{
+            if(product.getSize() === ''){
+                alert('Veuillez selectionner une taille');
             }
             else{
-                existingCookie[product.getId()] = productToStringify[product.getId()];
+                alert('Veuillez selectionner une couleur');
             }
-
-            productToStringify = existingCookie;
         }
-
-        /* age set at one week from now */
-        CookieManager.set(
-            'retailerProducts',
-            JSON.stringify(productToStringify),
-            '/',
-            '',
-            60 * 60 * 24 * 7
-        );
-
-        /* Show validation button */
-        saveOrderButton.showButton();
     }
 }
 

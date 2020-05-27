@@ -591,7 +591,7 @@ $terms = $new_terms;
 return $terms;
 }*/
 
-
+/*
 
 add_action( 'woocommerce_product_query', 'ts_custom_pre_get_posts_query' );
 
@@ -620,4 +620,4 @@ function ts_custom_pre_get_posts_query( $q ) {
         );
         $q->set( 'tax_query', $tax_query );
     }
-}
+}*/

@@ -382,7 +382,7 @@ get_header('shop');
                             $wp_query->the_post();
                             $postID = $post->ID;
                             $postExcerpt =  $post->post_excerpt;
-             
+
 /******************************************************* ******************************/
 /******************************************************* ******************************/
     $ordering          = WC()->query->get_catalog_ordering_args();
@@ -442,12 +442,17 @@ get_header('shop');
 			<div class="product-info-wrap info">
 				<?php do_action( 'woocommerce_shop_loop_item_title', $cat_info ); ?>
 				<?php Nasa_WC_Attr_UX::getInstance()->product_content_variations_color_label() ?>
-
+				
+				
+				<?php 
+                    echo '<div class="price-wrap">';
+                        woocommerce_template_loop_price();
+                    echo '</div>';
+                ?>
                 <?=$postExcerpt?>
-
+                
 			</div>
 			<?php
-
 			global $product, $nasa_opt;
 			if ( $show_in_list && ( ! isset( $nasa_opt['nasa_in_mobile'] ) || ! $nasa_opt['nasa_in_mobile'] ) ) {
 				$stock_status = $product->get_stock_status();

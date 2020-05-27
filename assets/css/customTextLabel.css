@@ -1,0 +1,9 @@
+.nasa-product-content-variable-warp a{
+    opacity: 1 !important;
+}
+
+/* disable pointer events to prevent the click on some elements */
+.product-img,
+.product-info-wrap .name{
+    pointer-events: none;
+}

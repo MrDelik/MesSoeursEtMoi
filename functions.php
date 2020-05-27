@@ -28,13 +28,30 @@ function theme_enqueue_styles_and_scripts() {
     wp_enqueue_style('elessi-style', get_template_directory_uri() . '/style.css');
     wp_enqueue_style('elessi-child-style', get_stylesheet_uri());
 
-    if(is_tax('product_cat')){
+    if(is_tax('product_cat') ||  is_shop()){
+        $currentObj = get_queried_object();
+        $currentTermId = '';
+        $termObj = '';
+        $termSlug = '';
+        if(isset(get_queried_object()->term_id)){
+            $currentTermId = get_queried_object()->term_id;
+        }
+        if($currentTermId != '') {
+            $termObj = get_term_by('id', $currentTermId, 'product_cat');
+            $termSlug = $termObj->slug;
+        }
+        if($termSlug == 'retailersoli'){
+            wp_enqueue_style('customTextLabelCss', get_stylesheet_directory_uri() . '/assets/css/customTextLabel.css', [], false , false);
+        }
+        else {
+            wp_enqueue_script('customTextLabel', get_stylesheet_directory_uri() . '/assets/js/customTextLabel.js', [], true , true);
+        }
 	    wp_enqueue_script('elessi-retailer-custom-page-js', get_stylesheet_directory_uri() . '/assets/js/retailerPage.js', [], true , true);
 	    wp_enqueue_script('elessi-sweetalert2js', get_stylesheet_directory_uri() . '/assets/js/sweetalert2.all.min.js', [], true , true);
 	    wp_enqueue_style('elessi-sweetalert2css', get_stylesheet_directory_uri() . '/assets/css/sweetalert2.min.css', [], true);
 	    wp_enqueue_style('elessi-retailer-shop', get_stylesheet_directory_uri() . '/assets/css/retailershop.css', [], true);
-	}
-}
+        }
+    }
 add_action('wp_enqueue_scripts', 'theme_enqueue_styles_and_scripts', 998);
 
 require __DIR__  . DIRECTORY_SEPARATOR . 'postTypes'  . DIRECTORY_SEPARATOR . 'collectionPostType.php';
@@ -591,7 +608,7 @@ $terms = $new_terms;
 return $terms;
 }*/
 
-
+/*
 
 add_action( 'woocommerce_product_query', 'ts_custom_pre_get_posts_query' );
 
@@ -620,4 +637,4 @@ function ts_custom_pre_get_posts_query( $q ) {
         );
         $q->set( 'tax_query', $tax_query );
     }
-}
+}*/

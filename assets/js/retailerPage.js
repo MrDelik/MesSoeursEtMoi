@@ -742,14 +742,63 @@ if( cookieName !== null ){
     }
 }
 
-let priceUpdater = new PriceUpdater();
-let customObserver = new CustomObserver();
-let quantityObserver = new QuantityObserver();
-let retailSaver = new RetailSaver();
-let productDetailsManager = new ProductDetails();
-let saveOrderButton = new SaveOrderButton();
-let modalHandler = new ModalHandler();
-let addressObserver = new AddressObserver();
-new StepsSwitcher();
-let recapManager = new OrderRecapManager();
-new SelectReplacement();
+class FilterObserver{
+    constructor(params = {}){
+        this.params = {
+            selector: '#wrapper'
+        };
+
+        for(let param in params){
+            if(param in this.params){
+                this.params[param] = params[param];
+            }
+        }
+
+        this.observer = new MutationObserver(this.observerCallback);
+        this.observer.observe(
+            document.querySelector(this.params.selector),
+            {
+                childList: true,
+                subtree: true
+            }
+        );
+    }
+
+    observerCallback( items, observerInst ){
+        console.log(items, observerInst);
+    }
+}
+
+let priceUpdater;
+let customObserver;
+let quantityObserver;
+let retailSaver;
+let productDetailsManager;
+let saveOrderButton;
+let modalHandler;
+let addressObserver;
+let recapManager;
+
+function initPage(){
+    priceUpdater = new PriceUpdater();
+    customObserver = new CustomObserver();
+    quantityObserver = new QuantityObserver();
+    retailSaver = new RetailSaver();
+    productDetailsManager = new ProductDetails();
+    saveOrderButton = new SaveOrderButton();
+    modalHandler = new ModalHandler();
+    addressObserver = new AddressObserver();
+    new StepsSwitcher();
+    recapManager = new OrderRecapManager();
+    new SelectReplacement();
+}
+
+initPage();
+
+// let filterObserver = new FilterObserver();
+
+jQuery(document).ajaxSuccess(function(event, xhr, settings){
+    if( settings.url.includes('retailersoli') ){
+        initPage();
+    }
+});

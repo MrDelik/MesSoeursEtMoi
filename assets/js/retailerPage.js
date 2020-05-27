@@ -207,7 +207,9 @@ class ProductDetails{
     constructor( params = {} ){
         this.params = {
             detailsSelector: '.retailer-product-recap',
-            templateSelector: '#productDetailsTemplate'
+            templateSelector: '#productDetailsTemplate',
+            removeButtonSelector: '.removeRetailerProduct',
+            rowSelector: '.productDetailsRow'
         };
 
         for(let param in params){
@@ -215,6 +217,8 @@ class ProductDetails{
                 this.params[param] = params[param];
             }
         }
+
+        document.querySelectorAll( this.params.removeButtonSelector ).forEach(button => this.attachRemoveEvent(button));
     }
 
     /**
@@ -223,7 +227,7 @@ class ProductDetails{
      * @param productDetails
      */
     addDetails( row, productDetails ){
-        let selector = productDetails.color+'-'+productDetails.size+'-'+productDetails.id;
+        let selector = productDetails.colorName+'-'+productDetails.size+'-'+productDetails.id;
         let detailsContainer = row.querySelector('#'+selector);
 
         if(  detailsContainer !== null ){
@@ -235,6 +239,28 @@ class ProductDetails{
             detailsContainer.content.firstElementChild.id  = selector;
             row.querySelector(this.params.detailsSelector).appendChild(detailsContainer.content);
         }
+    }
+
+    attachRemoveEvent( button ){
+        button.addEventListener('click', e => this.removeDetails(e));
+    }
+
+    removeDetails(e){
+        e.preventDefault();
+
+        let row = e.target.closest(this.params.rowSelector);
+        let [color, size, id] = row.id.split('-');
+
+        let cookie = JSON.parse(CookieManager.get('retailerProducts'));
+        delete cookie[id][color+'-'+size];
+        CookieManager.set(
+            'retailerProducts',
+            JSON.stringify(cookie),
+            '/',
+            '',
+            60 * 60 * 24 * 7
+        );
+        row.remove();
     }
 
     /**
@@ -250,6 +276,8 @@ class ProductDetails{
         elem.querySelector('.product-Qty').textContent = infos.qty;
         elem.querySelector('.product-unit-price').textContent = infos.unitprice;
         elem.querySelector('.product-total-price').textContent = infos.totalprice;
+
+        this.attachRemoveEvent( elem.querySelector('.removeRetailerProduct') );
 
         return elem;
     }

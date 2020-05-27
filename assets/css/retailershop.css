@@ -91,3 +91,9 @@ div.nasa-product-content-nasa_label-wrap div.nasa-product-content-size-wrap-chil
 .product-info-wrap .name{
     pointer-events: none;
 }
+
+.removeRetailerProduct{
+    padding: 3px;
+    flex-shrink: 0;
+    flex-grow: 0;
+}

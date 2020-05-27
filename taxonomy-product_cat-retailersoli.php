@@ -382,7 +382,7 @@ get_header('shop');
                             $wp_query->the_post();
                             $postID = $post->ID;
                             $postExcerpt =  $post->post_excerpt;
-             
+
 /******************************************************* ******************************/
 /******************************************************* ******************************/
     $ordering          = WC()->query->get_catalog_ordering_args();
@@ -442,12 +442,17 @@ get_header('shop');
 			<div class="product-info-wrap info">
 				<?php do_action( 'woocommerce_shop_loop_item_title', $cat_info ); ?>
 				<?php Nasa_WC_Attr_UX::getInstance()->product_content_variations_color_label() ?>
-
+				
+				
+				<?php 
+                    echo '<div class="price-wrap">';
+                        woocommerce_template_loop_price();
+                    echo '</div>';
+                ?>
                 <?=$postExcerpt?>
-
+                
 			</div>
 			<?php
-
 			global $product, $nasa_opt;
 			if ( $show_in_list && ( ! isset( $nasa_opt['nasa_in_mobile'] ) || ! $nasa_opt['nasa_in_mobile'] ) ) {
 				$stock_status = $product->get_stock_status();
@@ -466,7 +471,7 @@ get_header('shop');
                             <div class="group-btn-in-list"></div>
                         </div>-->
 
-				<div class='retailer-product-command' style='padding:30px;display: flex; flex-wrap: wrap;'>
+				<div class='retailer-product-command' style='display: flex; flex-wrap: wrap;'>
 					<div class='retailer-product-price' style='width:100%;'>
 						<span class="retailer-info-title">Prix Retailer : </span>
 						<span class='retailer-price-container'>50</span> <span class='priceCurrency'>€</span>
@@ -519,6 +524,9 @@ get_header('shop');
 											<span class="product-total-price"><?=(int)$retailerProduct['qty']*(int)$retailerProduct['price']?></span>
 											<span class="priceCurrency">&euro;</span>
 										</div>
+										<button type="button" class="removeRetailerProduct">
+											<i class="fas fa-times"></i>
+										</button>
 									</div>
 								</div>
 							<?php endforeach; ?>
@@ -546,6 +554,9 @@ get_header('shop');
 					<span class="product-total-price"></span>
 					<span class="priceCurrency">&euro;</span>
 				</div>
+				<button type="button" class="removeRetailerProduct">
+					<i class="fas fa-times"></i>
+				</button>
 			</div>
 		</div>
 	</template>

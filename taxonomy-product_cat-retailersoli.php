@@ -524,6 +524,9 @@ get_header('shop');
 											<span class="product-total-price"><?=(int)$retailerProduct['qty']*(int)$retailerProduct['price']?></span>
 											<span class="priceCurrency">&euro;</span>
 										</div>
+										<button type="button" class="removeRetailerProduct">
+											<i class="fas fa-times"></i>
+										</button>
 									</div>
 								</div>
 							<?php endforeach; ?>
@@ -551,6 +554,9 @@ get_header('shop');
 					<span class="product-total-price"></span>
 					<span class="priceCurrency">&euro;</span>
 				</div>
+				<button type="button" class="removeRetailerProduct">
+					<i class="fas fa-times"></i>
+				</button>
 			</div>
 		</div>
 	</template>

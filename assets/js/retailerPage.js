@@ -33,7 +33,7 @@ class CustomObserver{
             valueContainer.textContent = button.classList.contains('nasa-disable') || button.classList.contains('nasa-active') ? '' : button.dataset.value;
         }
         else if( button.dataset.pa === 'color' ){
-            if( button.classList.contains('nasa-disable') || !button.classList.contains('nasa-active') ){
+            if( button.classList.contains('nasa-disable') || button.classList.contains('nasa-active') ){
                 valueContainer.style.backgroundColor = 'transparent';
                 valueContainer.textContent = '';
             }
@@ -121,11 +121,13 @@ class QuantityObserver{
     }
 
     quantityObserver(e){
-        if( e.target.value > 0 ){
-            this.activateButton( e.target.closest(this.params.parentSelector) );
+        console.log( e.target, e.target.checkValidity(), e.target.validity.valid );
+        if( !e.target.checkValidity() ){
+            e.preventDefault();
+            this.deactivateButton( e.target.closest(this.params.parentSelector) );
         }
         else{
-            this.deactivateButton( e.target.closest(this.params.parentSelector) );
+            this.activateButton( e.target.closest(this.params.parentSelector) );
         }
     }
 

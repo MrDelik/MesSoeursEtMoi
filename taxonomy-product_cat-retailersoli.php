@@ -496,7 +496,7 @@ get_header('shop');
 					</ul>
 					<div style='display:flex; flex-wrap:nowrap; align-items:center;justify-content:space-between;width:100%;'>
 						<label for='quantity'>Quantité : </label>
-						<input name='quantity' type='number' class="quantity" style='width:100px; margin:0;'>
+						<input name='quantity' type='number' class="quantity" style='width:100px; margin:0;' min="0">
 					</div>
 					<button class="save-retailer" type="button" disabled>
 						<?=__('Ajouter au panier', 'woocommerce')?>

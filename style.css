@@ -479,6 +479,9 @@ Version: 1.0
     color:white;
     font-size:12px;
 }
+.input-container input[type="checkbox"]:checked + label span.checkbox{
+    background: black;
+}
 .input-container input[type="checkbox"]:checked + label span.checkbox i{
     display: initial;
 }

@@ -40,7 +40,7 @@ function theme_enqueue_styles_and_scripts() {
             $termObj = get_term_by('id', $currentTermId, 'product_cat');
             $termSlug = $termObj->slug;
         }
-        if($termSlug == 'retailersoli'){
+        if($termSlug == 'retailers'){
             wp_enqueue_style('customTextLabelCss', get_stylesheet_directory_uri() . '/assets/css/customTextLabel.css', [], false , false);
         }
         else {

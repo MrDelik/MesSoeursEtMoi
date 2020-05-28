@@ -846,7 +846,7 @@ initPage();
 // let filterObserver = new FilterObserver();
 
 jQuery(document).ajaxSuccess(function(event, xhr, settings){
-    if( settings.url.includes('retailersoli') ){
+    if( settings.url.includes('retailers') ){
         initPage();
     }
 });

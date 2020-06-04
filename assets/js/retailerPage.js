@@ -273,13 +273,26 @@ class ProductDetails{
 
         let cookie = JSON.parse(CookieManager.get('retailerProducts'));
         delete cookie[id][color+'-'+size];
-        CookieManager.set(
-            'retailerProducts',
-            JSON.stringify(cookie),
-            '/',
-            '',
-            60 * 60 * 24 * 7
-        );
+        /* check if the current object has rows */
+        if( Object.keys(cookie[id]).length === 0 ){
+            delete cookie[id];
+        }
+
+        /* check if the cookie is not empty */
+        if( Object.keys(cookie).length === 0 ){
+            CookieManager.delete('retailerProducts');
+
+            saveOrderButton.hideButton();
+        }
+        else{
+            CookieManager.set(
+                'retailerProducts',
+                JSON.stringify(cookie),
+                '/',
+                '',
+                60 * 60 * 24 * 7
+            );
+        }
         row.remove();
     }
 
@@ -438,6 +451,14 @@ class CookieManager{
             this.set(name, value);
         }
     }
+
+    /**
+     * delete a cookie
+     * @param name
+     */
+    static delete( name ){
+        document.cookie = name + '=' + '; expires=Thu, 18 Dec 2013 12:00:00 UTC; path=/';
+    }
 }
 
 class SaveOrderButton{
@@ -496,11 +517,21 @@ class SaveOrderButton{
                 LoaderIconManager.show( '#retailerOrderLoader' );
             },
             success: function( data, status, jqXhr ){
-                Swal.fire({
-                    icon: 'success',
-                    title : data.message,
-                    timer: 1500
-                });
+                console.log( data );
+                if( data.result === 'success' ){
+                    Swal.fire({
+                        icon: 'success',
+                        title : data.message,
+                        timer: 1500
+                    });
+                }
+                else{
+                    Swal.fire({
+                        icon: 'error',
+                        title : data.message,
+                        timer: 1500
+                    });
+                }
             },
             error:function( data, jqXhr, errorThrown ){
                 Swal.fire({

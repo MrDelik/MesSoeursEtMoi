@@ -462,37 +462,46 @@ function saveRetailerOrder(){
 	$order = json_decode(stripslashes($_COOKIE['retailerProducts']), true);
 	$currentDate = new DateTime();
 
-	$order_id = wp_insert_post([
-		'post_type' => 'retailer_order',
-		'post_author' => $userID,
-		'post_title' => 'Retailer order at '.$currentDate->format('d/m/Y').' at '.$currentDate->format('H:i:s'),
-		'meta_input' => [
-			'_order' => $order,
-			'_billing_address' => $billingAddress,
-			'_shipping_address' => $shippingAddress
-		]
-	]);
+	if( !empty($order) ){
+		$order_id = wp_insert_post([
+			'post_type' => 'retailer_order',
+			'post_author' => $userID,
+			'post_title' => 'Retailer order at '.$currentDate->format('d/m/Y').' at '.$currentDate->format('H:i:s'),
+			'meta_input' => [
+				'_order' => $order,
+				'_billing_address' => $billingAddress,
+				'_shipping_address' => $shippingAddress
+			]
+		]);
 
-	if( is_wp_error($order_id) ){
-		$response = [
-			'result' => 'error',
-			'message' => $order_id->get_error_message()
-		];
+		if( is_wp_error($order_id) ){
+			$response = [
+				'result' => 'error',
+				'message' => $order_id->get_error_message()
+			];
+		}
+		else{
+			$response = [
+				'result' => 'success',
+				'message' => __('Commande créée avec succès', 'elessi-theme')
+			];
+
+			$emails = [get_bloginfo('admin_email')];
+			if( !empty($_POST['getCopy']) ){
+				$currentUser = wp_get_current_user();
+				$emails[] = $currentUser->user_email;
+			}
+
+			do_action('send_messoeursetmoi_retailer_order_validated', $order_id, implode(',', $emails));
+		}
 	}
 	else{
 		$response = [
-			'result' => 'success',
-			'message' => __('Commande créée avec succès', 'elessi-theme')
+			'result' => 'error',
+			'message' => __('Une commande vide ne peux pas être envoyée', 'elessi-theme')
 		];
-
-		$emails = [get_bloginfo('admin_email')];
-		if( !empty($_POST['getCopy']) ){
-			$currentUser = wp_get_current_user();
-			$emails[] = $currentUser->user_email;
-		}
-
-		do_action('send_messoeursetmoi_retailer_order_validated', $order_id, implode(',', $emails));
 	}
+
 
 	/* return the reponse as json */
 	wp_send_json( $response );

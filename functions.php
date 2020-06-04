@@ -28,6 +28,10 @@ function theme_enqueue_styles_and_scripts() {
     wp_enqueue_style('elessi-style', get_template_directory_uri() . '/style.css');
     wp_enqueue_style('elessi-child-style', get_stylesheet_uri());
 
+    if( is_shop() ){
+    	wp_enqueue_script('shopTilt', get_stylesheet_directory_uri() . '/assets/js/shopTilt.js', [], true, true);
+	}
+
     if(is_tax('product_cat') ||  is_shop()){
         $currentObj = get_queried_object();
         $currentTermId = '';

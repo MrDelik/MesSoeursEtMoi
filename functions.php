@@ -569,35 +569,13 @@ function addSizeToName( $productName, $cart_item = null, $cart_item_key = null )
 }
 add_filter('woocommerce_cart_item_name', 'addSizeToName');
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+function hidemywidget($all_widgets) {
+	if( is_shop() ){
+		array_pop($all_widgets['shop-sidebar']);
+	}
+	return $all_widgets;
+}
+add_filter('sidebars_widgets', 'hidemywidget');
 
 /**************************************** HIDE TERMS THAT WE DON T WANT TO DISPLAY *******************************************************///////////////////////
 /*add_filter( 'get_terms', 'ts_get_subcategory_terms', 10, 3 );

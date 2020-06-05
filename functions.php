@@ -577,27 +577,26 @@ function hidemywidget($all_widgets) {
 }
 add_filter('sidebars_widgets', 'hidemywidget');
 
-/**************************************** HIDE TERMS THAT WE DON T WANT TO DISPLAY *******************************************************///////////////////////
-/*add_filter( 'get_terms', 'ts_get_subcategory_terms', 10, 3 );
-
+/**************************************** HIDE TERMS THAT WE DON T WANT TO DISPLAY *******************************************************/
 function ts_get_subcategory_terms( $terms, $taxonomies, $args ) {
+	if( is_shop() ){
+		$new_terms = array();
 
-$new_terms = array();
+		// if it is a product category and on the shop page
+		if ( in_array( 'product_cat', $taxonomies ) ) {
+			foreach ( $terms as $key => $term ) {
+				if ( !in_array( $term->slug, ['uncategorised','retailers'] ) ) { //pass the slug name here
+					$new_terms[] = $term;
+				}
+			}
 
-// if it is a product category and on the shop page
-if ( in_array( 'product_cat', $taxonomies ) ) {
+			$terms = $new_terms;
+		}
+	}
 
-foreach ( $terms as $key => $term ) {
-
-if ( ! in_array( $term->slug, array( 'uncategorised','retailers' ) ) ) { //pass the slug name here
-$new_terms[] = $term;
+	return $terms;
 }
-}
-$terms = $new_terms;
-}
-
-return $terms;
-}*/
+add_filter( 'get_terms', 'ts_get_subcategory_terms', 10, 3 );
 
 /*
 

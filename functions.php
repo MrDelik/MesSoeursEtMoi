@@ -578,6 +578,7 @@ function hidemywidget($all_widgets) {
 add_filter('sidebars_widgets', 'hidemywidget');
 
 /**************************************** HIDE TERMS THAT WE DON T WANT TO DISPLAY *******************************************************/
+/*
 function ts_get_subcategory_terms( $terms, $taxonomies, $args ) {
 	if( is_shop() ){
 		$new_terms = array();
@@ -597,6 +598,7 @@ function ts_get_subcategory_terms( $terms, $taxonomies, $args ) {
 	return $terms;
 }
 add_filter( 'get_terms', 'ts_get_subcategory_terms', 10, 3 );
+*/
 
 /*
 

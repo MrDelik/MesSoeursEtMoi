@@ -809,15 +809,16 @@ class SelectReplacement{
     }
 }
 
+
 /* Set the list mode */
 let cookieName = document.querySelector( 'input[name="nasa_archive_grid_view"]' );
-if( cookieName !== null ){
-    cookieName = cookieName.value;
-
-    if( !CookieManager.exist(cookieName) || CookieManager.get(cookieName) !== 'list' ){
-        CookieManager.set( cookieName, 'list', '/', '', 60 * 60 * 24 * 7 );
-
-        document.querySelector('.nasa-content-page-products > ul').className = 'products large-block-grid-3 small-block-grid-1 medium-block-grid-2 list';
+if (window.location.toString().includes("retailers")) {
+   if( cookieName != null ){
+        cookieName = cookieName.value;
+        if( !CookieManager.exist(cookieName) || CookieManager.get(cookieName) !== 'list' ){
+            CookieManager.set( cookieName, 'list', '/', '', 60 * 60 * 24 * 7 );
+            document.querySelector('.nasa-content-page-products > ul').className = 'products large-block-grid-3 small-block-grid-1 medium-block-grid-2 list';
+        }
     }
 }
 
@@ -844,7 +845,7 @@ class FilterObserver{
     }
 
     observerCallback( items, observerInst ){
-        console.log(items, observerInst);
+        /*console.log(items, observerInst);*/
     }
 }
 
@@ -870,14 +871,37 @@ function initPage(){
     new StepsSwitcher();
     recapManager = new OrderRecapManager();
     new SelectReplacement();
+    
+    var retailerText = document.querySelectorAll('.nasa-list-category');
+    retailerText.forEach(function(e){
+        let links = e.querySelectorAll('a');
+        links.forEach(function(link){
+            if(link.innerHTML == 'Retailers') {
+                /*console.log(link.previousElementSibling);*/
+                link.style.display = "none";
+            }
+        });
+    });
+        
+    var mainCatFilter = document.querySelector('.cat-item-retailers');
+    var mainCatVoirTout = document.querySelector('.cat-item-voir-tout');
+    mainCatFilter.style.display = "none";
+    mainCatVoirTout.style.display = "none";
+    
 }
 
 initPage();
 
 // let filterObserver = new FilterObserver();
 
+
+
+
 jQuery(document).ajaxSuccess(function(event, xhr, settings){
     if( settings.url.includes('retailers') ){
         initPage();
     }
 });
+
+
+

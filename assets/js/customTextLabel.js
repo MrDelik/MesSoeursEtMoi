@@ -1,5 +1,19 @@
 
 window.addEventListener("DOMContentLoaded", (event) => {
+    var retailerText = document.querySelectorAll('.nasa-list-category');
+    retailerText.forEach(function(e){
+        let links = e.querySelectorAll('a');
+        links.forEach(function(link){
+            if(link.innerHTML == 'Retailers') {
+                link.style.display = "none";
+            }
+        });
+    });
+        
+    var mainCatFilter = document.querySelector('.cat-item-retailers');
+    var mainCatVoirTout = document.querySelector('.cat-item-voir-tout');
+    mainCatFilter.style.display = "none";
+    mainCatVoirTout.style.display = "none";
     
     var colorBullets = document.querySelectorAll('.nasa-product-content-nasa_color-wrap > div');
     colorBullets.forEach(function(e){
@@ -29,4 +43,3 @@ window.addEventListener("DOMContentLoaded", (event) => {
 
     });
 });
-

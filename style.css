@@ -9,6 +9,16 @@ Version: 1.0
 */
 
 
+.product-info .variations .value .nasa-attr-ux_wrap .nasa-attr-ux.nasa-attr-ux-color, .product-info .variations .value .nasa-attr-ux_wrap .nasa-attr-ux.nasa-attr-ux-image {
+    min-width: 50px;
+    padding-right:10px;
+}
+.product-info .variations .value .nasa-attr-ux_wrap .nasa-attr-ux {
+    min-width: 50px;
+    padding-right:10px;
+}
+
+
 /* HIDE COLOR BULLETS */
 .nasa-product-content-variable-warp a {
     opacity: 0 !important;
@@ -198,10 +208,6 @@ Version: 1.0
     
 }
 
-
-.product-info .variations .value .nasa-attr-ux_wrap .nasa-attr-ux.nasa-attr-ux-color, .product-info .variations .value .nasa-attr-ux_wrap .nasa-attr-ux.nasa-attr-ux-image {
-    min-width: 70px;
-}
 
 .product-warp-item .product-item .product-img-wrap .nasa-product-content-variable-warp .nasa-product-content-nasa_color-wrap .nasa-product-content-child:first-child a, .products.list .product-warp-item .product-item .product-img-wrap .nasa-product-content-variable-warp .nasa-product-content-nasa_image-wrap .nasa-product-content-child:first-child a {
     margin:0 !important;

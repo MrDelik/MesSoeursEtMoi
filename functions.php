@@ -7,6 +7,67 @@
 /**
  * Creating the debug function for dev purpose
  */
+
+
+
+
+
+
+
+//////////////////////////////////* HIDE UNUSED MENU FOR SOME CLARITY *//////////////////////////////////
+
+/*add_action( 'admin_init', function () {
+    echo '<pre>' . print_r( $GLOBALS[ 'menu' ], true) . '</pre>';
+} );*/
+
+function wpdocs_remove_menus(){
+  remove_menu_page( 'edit.php' );                       //Posts => ARTICLES
+  remove_menu_page( 'edit.php?post_type=nasa_block' );                       //Posts => ARTICLES
+  remove_menu_page( 'edit-comments.php' );          //Comments
+  remove_menu_page( 'edit.php?post_type=header' );      // Header builder
+  remove_menu_page( 'edit.php?post_type=footer' );      // Footer builder
+  remove_menu_page( 'edit.php?post_type=nasa_pin_pb' ); // Banner Products
+  remove_menu_page( 'edit.php?post_type=nasa_pin_mb' ); // Banner Material
+  remove_menu_page( 'admin.php?page=wc-admin' );                  //Marketing
+  remove_menu_page( 'admin.php?page=yith_woocompare_panel' );                  //Woo commerce compare
+  remove_menu_page( 'admin.php?page=vc-general' );                  //Editeur de page Wp bakery
+  remove_menu_page( 'tools.php' );                  //Outils dont suppression données clients
+}
+add_action( 'admin_menu', 'wpdocs_remove_menus' );
+
+
+
+function wpse_custom_menu_order( $menu_ord ) {
+    if ( !$menu_ord ) return true;
+
+    return array(
+        'index.php', // Dashboard
+         'edit.php?post_type=collection', 
+         'edit.php?post_type=retailer_order', 
+         'edit.php?post_type=product', 
+         'separator1', // First separator
+         'admin.php?page=wpcf7', 
+         'edit.php?post_type=page', 
+         'edit.php?post_type=nasa_block', 
+         'upload.php', 
+         'separator2', // Second separator
+        'separator3', // Third separator
+        
+    );
+}
+add_filter( 'custom_menu_order', 'wpse_custom_menu_order', 10, 1 );
+add_filter( 'menu_order', 'wpse_custom_menu_order', 10, 1 );
+
+
+
+
+
+
+
+
+
+
+
 if( !function_exists('debug') ){
 	function debug( ...$vars ){
 		echo '<pre>';

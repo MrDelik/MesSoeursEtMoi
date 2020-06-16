@@ -21,11 +21,11 @@
 } );*/
 
 function wpdocs_remove_menus(){
-  remove_menu_page( 'edit.php' );                       //Posts => ARTICLES
-  remove_menu_page( 'edit.php?post_type=nasa_block' );                       //Posts => ARTICLES
+//  remove_menu_page( 'edit.php' );                       //Posts => ARTICLES
+//  remove_menu_page( 'edit.php?post_type=nasa_block' );                       //Posts => ARTICLES
   remove_menu_page( 'edit-comments.php' );          //Comments
-  remove_menu_page( 'edit.php?post_type=header' );      // Header builder
-  remove_menu_page( 'edit.php?post_type=footer' );      // Footer builder
+//  remove_menu_page( 'edit.php?post_type=header' );      // Header builder
+//  remove_menu_page( 'edit.php?post_type=footer' );      // Footer builder
   remove_menu_page( 'edit.php?post_type=nasa_pin_pb' ); // Banner Products
   remove_menu_page( 'edit.php?post_type=nasa_pin_mb' ); // Banner Material
   remove_menu_page( 'admin.php?page=wc-admin' );                  //Marketing
@@ -121,7 +121,7 @@ add_action('wp_enqueue_scripts', 'theme_enqueue_styles_and_scripts', 998);
 
 require __DIR__  . DIRECTORY_SEPARATOR . 'postTypes'  . DIRECTORY_SEPARATOR . 'collectionPostType.php';
 
-/* adding informations to the user page */
+/* adding informations to the user page 
 function messoeursetmoi_extra_user_fields($user){
 	if( current_user_can('edit_user') ):
 		$isretailer = get_user_meta($user->ID, 'isRetailer', true);
@@ -152,7 +152,6 @@ function messoeursetmoi_extra_user_fields($user){
 add_action( 'show_user_profile', 'messoeursetmoi_extra_user_fields' );
 add_action( 'edit_user_profile', 'messoeursetmoi_extra_user_fields' );
 
-
 function messoeursetmoi_save_extra_user_fields($user_id){
 	if ( !current_user_can( 'edit_user', $user_id ) ) {
 		return false;
@@ -161,7 +160,7 @@ function messoeursetmoi_save_extra_user_fields($user_id){
 	update_user_meta( $user_id, 'isRetailer', array_key_exists('isRetailer', $_POST) ? $_POST['isRetailer'] : false );
 }
 add_action( 'personal_options_update', 'messoeursetmoi_save_extra_user_fields' );
-add_action( 'edit_user_profile_update', 'messoeursetmoi_save_extra_user_fields' );
+add_action( 'edit_user_profile_update', 'messoeursetmoi_save_extra_user_fields' );*/
 
 function my_phpmailer_configuration( $phpmailer ) {
 	$phpmailer->isSMTP();
@@ -396,26 +395,46 @@ function messoeursetmoi_render_order_products( WP_Post $post){
  * Exclude products from a particular category on the shop page
  */
 function custom_pre_get_posts_query( $q ) {
-
-    $tax_query = (array) $q->get( 'tax_query' );
+    $user = wp_get_current_user();
+    if($user->roles && $user->roles[0]) {
+       if ($user->roles[0] == 'retailer' || current_user_can( 'edit_posts' )) {
+                $tax_query = (array) $q->get( 'tax_query' );
 
     $tax_query[] = array(
         array(
-            'taxonomy' => 'retailer',
+            'taxonomy' => 'product_cat',
             'field'    => 'slug',
-            'terms'    => array( 'retailers-only'),
-            'operator' => 'NOT IN',
+            'terms'    => array( ''),
+            'operator' => 'OR',
            ) 
     );
 
     $q->set( 'tax_query', $tax_query );
+       }
+    }
+    else {
+        
+     $tax_query = (array) $q->get( 'tax_query' );
+        $tax_query[] = array(
+            array(
+                'taxonomy' => 'product_cat',
+                'field'    => 'slug',
+                'terms'    => array( 'retailers'),
+                'operator' => 'NOT IN',
+               ) 
+        );
+        $q->set( 'tax_query', $tax_query );
 
+        
+    }
+    
+   
 }
 add_action( 'woocommerce_product_query', 'custom_pre_get_posts_query' );
 
 /**
  * Add the retailer price to the simple product
- */
+ 
 function misha_adv_product_options(){
 	echo '<div class="options_group">';
 
@@ -435,7 +454,7 @@ add_action( 'woocommerce_product_options_pricing', 'misha_adv_product_options');
 function misha_save_fields( $ord_id ){
 	update_post_meta( $ord_id, 'retailer_price', $_POST[ 'retailer_price' ] );
 }
-add_action( 'woocommerce_process_product_meta', 'misha_save_fields', 10, 2 );
+add_action( 'woocommerce_process_product_meta', 'misha_save_fields', 10, 2 );*/
 
 /**
  * Add the retailer price product variation
@@ -443,7 +462,7 @@ add_action( 'woocommerce_process_product_meta', 'misha_save_fields', 10, 2 );
  * @param $variation_data
  * @param $variation
  */
-function bbloomer_add_custom_field_to_variations( $loop, $variation_data, $variation ) {
+/*function bbloomer_add_custom_field_to_variations( $loop, $variation_data, $variation ) {
 	woocommerce_wp_text_input( array(
 			'id' => 'retailer_price[' . $loop . ']',
 			'class' => 'short',
@@ -453,7 +472,7 @@ function bbloomer_add_custom_field_to_variations( $loop, $variation_data, $varia
 		)
 	);
 }
-add_action( 'woocommerce_variation_options_pricing', 'bbloomer_add_custom_field_to_variations', 10, 3 );
+add_action( 'woocommerce_variation_options_pricing', 'bbloomer_add_custom_field_to_variations', 10, 3 );*/
 
 /**
  * Save the retailer price meta
@@ -691,3 +710,74 @@ function ts_custom_pre_get_posts_query( $q ) {
         $q->set( 'tax_query', $tax_query );
     }
 }*/
+
+
+
+
+
+
+
+
+
+
+
+/* CUSTOM PRICE REGARDING THE ROLE */
+
+/**
+ * Set a different price for multiple different WooCommerce customers.
+ *
+ * @param float $price The current price of the item.
+ * @return float
+ */
+
+add_role(
+    'retailer',
+    __( 'Retailer Client' ),
+    array(
+    'read'         => true,  // true allows this capability
+    'edit_posts'   => false,
+    )
+);
+
+/* Disable payement method for custom user role */
+
+/* 
+Gateway name     => GATEWAY ID
+
+
+Visa / master card  =>  stripe
+Direct Bank transfer=>  bacs
+Cheque payment      =>  cheque
+Cash on delivery    =>  cod
+Paypal              => paypal ( redirect on paypal)
+ppec_paypal         => paypal ( paypal ajax validation)
+
+*/
+
+
+function bbloomer_paypal_disable_manager( $available_gateways ) {
+    $user = wp_get_current_user();
+/*echo "<pre>";
+        var_dump($available_gateways);
+        echo "</pre>";*/
+    if($user->roles && $user->roles[0]) {
+       if ($user->roles[0] == 'retailer' ) {
+        unset( $available_gateways['ppec_paypal'] , $available_gateways['bacs']  );
+       }
+        else {
+        unset( $available_gateways['cheque'] );
+        return $available_gateways; 
+        }
+       return $available_gateways;
+    }
+    else {
+        unset( $available_gateways['cheque'] );
+        return $available_gateways; 
+    }
+}
+
+add_filter( 'woocommerce_available_payment_gateways', 'bbloomer_paypal_disable_manager' );
+  
+
+
+

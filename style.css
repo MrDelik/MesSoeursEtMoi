@@ -9,6 +9,72 @@ Version: 1.0
 */
 
 
+
+
+
+.nasa-select-languages .nasa-list-languages {
+    right:0 !important;
+    left:auto !important;
+}
+.nasa-select-languages .nasa-select-languages {
+    margin: 0 !important;
+}
+.nasa-select-languages .nasa-item-lang {
+    text-align: right !important;
+}
+
+
+.nasa-unavailable {
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+.nasa-unavailable .nasa-attr-bg::after {
+    content:'X';
+    display:block;
+    position: absolute;
+    left:0;
+    width:100%;
+    height:100%;
+    color:black;
+    font-size: 1.5rem;
+}
+.nasa-unavailable.selected .nasa-attr-bg::after {
+    content:'';
+    display:block;
+    position: absolute;
+    left:0;
+    width:100%;
+    height:100%;
+}
+
+.nasa-attr-bg {
+    position: relative;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+.variations .nasa-attr-ux.nasa-unavailable {
+    opacity: 0.6 !important;
+}
+
+
+.wcppec-checkout-buttons {
+    display:none !important;
+}
+
+.product-details ,.product_meta ,body.has-nasa-cart-fixed .nasa-add-to-cart-fixed {
+    display:none !important;
+}
+
+#nasa-footer {
+    background:white !important;
+}
+
+#main-content {
+    min-height: calc(70vh - 170px);
+}
+
 .product-info .variations .value .nasa-attr-ux_wrap .nasa-attr-ux.nasa-attr-ux-color, .product-info .variations .value .nasa-attr-ux_wrap .nasa-attr-ux.nasa-attr-ux-image {
     min-width: 50px;
     padding-right:10px;
@@ -76,6 +142,10 @@ Version: 1.0
   padding: 5px 0;
 }
 
+#masthead .large-12{
+    padding-left:6px;
+}
+
 #masthead .nasa-wrap-width-main-menu {
     display: flex;
     align-items: center;
@@ -100,6 +170,12 @@ Version: 1.0
     background-repeat: no-repeat;
     transition-delay: 0s;
     margin:1rem;
+}
+
+@media screen and (min-width:580px) and (max-width:1140px) {
+   .collectionArticle {
+    flex-basis: 45%;
+    }
 }
 .collectionArticle > * {
     transition-delay: 0s;
@@ -258,6 +334,10 @@ Version: 1.0
     z-index: 6;
     visibility: visible; 
     opacity: 1; 
+    display:none;
+}
+.nasa-product-content-color-wrap-child {
+    display: none;
 }
 
 .product-item .nasa-product-content-nasa_color-wrap {
@@ -326,10 +406,39 @@ Version: 1.0
     margin:0;
     text-align: right;
     margin-right: 1.5rem;
+    display:none !important;
+}
+
+
+#top-bar .columns {
+    display:flex;
+}
+
+#top-bar .left-text {
+    flex-grow: 1;
+    align-items: center;
+    display: flex;
+}
+#top-bar .left-text .inner-block{
+    flex-basis: 100%;
+    max-height: 42px;
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+}
+#top-bar .left-text p {
+   margin:0;
 }
 
 
 /*************************************************************** MENU SOCIAL ICON ****************************************************************************************************/
+.woocommerce-product-details__short-description img {
+    max-width: 109px;
+    margin-right:1rem;
+    display:inline-block;
+    max-height:75px;
+}
+
 
 #site-navigation .fa {
     margin-right:1rem;
@@ -495,6 +604,10 @@ Version: 1.0
     background-color:#f76b6a;
     border:2px solid #f76b6a;
 }*/
+
+.nasa-product-content-nasa_label-wrap > div, .nasa-product-content-nasa_color-wrap div {
+    justify-content: center;
+}
 
 .save-retailer-order-container{
     padding:6px;
@@ -781,3 +894,187 @@ table.table-responsive td::before{
     }
 }
 
+body .fixed-already .logo-wrapper .logo .header_logo {
+    width:auto !important;
+}
+
+.current-menu-item {
+    color:black !important;
+    font-weight: bolder !important;
+}
+
+#wrapper .woocommerce-message {
+    color: #FFF !important;
+    background-color: #b3b3b3 !important;
+}
+
+.product-info .nasa-size-guide a {
+    color:black !important;
+    font-weight: bolder;
+    text-decoration: underline;
+}
+
+.noCursor , .noCursor > a {
+   cursor: default !important;
+}
+
+
+
+/* FORMULAIRE PAGE CONTACT*/
+
+#wpcf7-f3718-p3529-o1 center , #wpcf7-f11269-p3593-o1 center{
+    padding: 1.5rem 0;
+}
+#wpcf7-f3718-p3529-o1 center p strong , #wpcf7-f11269-p3593-o1 center p strong{
+    margin-top:1rem;
+    display: inline-block;
+}
+
+
+/* CORRECTION FOOTER */
+
+#nasa-footer .menuFlex .nasa-menu-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: row-reverse;
+}
+#nasa-footer .menuFlex .nasa-menu-wrapper > li {
+    margin-right:0.5rem;
+}
+
+
+#nasa-footer .nasa-nav-sc-menu {
+    margin-top:0;
+}
+#nasa-footer .nasa-nav-sc-menu .nasa-menu-wrapper{
+    margin-bottom:0;
+}
+
+#nasa-footer .widget_nav_menu.menuFlex ul li a, #nasa-footer .nasa-nav-sc-menu.menuFlex ul li a {
+    padding:0;
+}
+
+.smallLogo {
+    max-width: 100px;
+}
+
+#nasa-footer .row {
+    display:flex;
+    align-items: center;
+}
+
+.social-icons.nasa-follow {
+    margin:1rem 0;
+}
+
+
+/* CREDIT CARD ICON */
+#nasa-footer .nasa-nav-sc-menu.menuFlex .nasa-menu-wrapper {
+    align-items: center;
+    display: flex;
+}
+
+.ccIcon {
+    height: 30px;
+    width:40px;
+    background-position: center;
+    background-size: contain;
+    font-size: 0;
+    background-repeat: no-repeat;
+}
+
+#nasa-footer .widget_nav_menu ul li a, #nasa-footer .nasa-nav-sc-menu ul li a {
+    padding:0;
+}
+
+.iconAmericanExpress {
+    background-image: url(cc-icon/cc-american.png);
+}
+.iconCarteBleue {
+    background-image: url(cc-icon/cc-cartebleue.png);
+}
+.iconDiners {
+    background-image: url(cc-icon/cc-diners.png);
+}
+.iconDiscover {
+    background-image: url(cc-icon/cc-discover.png);
+}
+
+.iconMaster {
+    background-image: url(cc-icon/cc-maester.png);
+}
+.iconMaestro {
+    background-image: url(cc-icon/cc-maestro.png);
+}
+
+.iconPaypal {
+    background-image: url(cc-icon/cc-paypal.png);
+}
+.iconVisa {
+    background-image: url(cc-icon/cc-visa.png);
+}
+
+
+
+/* MAIL CHIMP INTEGRATION */ 
+
+#mailChimpNews #mc_embed_signup label {
+    width:100%;
+    font-family: "Nunito Sans", helvetica, arial, sans-serif !important;
+    font-weight: bold;
+    font-style: normal;
+    color: #333333;
+    text-rendering: optimizeLegibility;
+    margin-top: 0.2em;
+    text-align: left;
+}
+
+#mailChimpNews #mc_embed_signup #mce-EMAIL {
+    width:calc(100% - 120px);
+}
+#mailChimpNews #mc_embed_signup_scroll {
+    display:flex;
+    flex-wrap: wrap;
+}
+
+#mailChimpNews #mc_embed_signup .clear {
+    width:115px;
+}
+
+.products-arrow  .dropdown-wrap {
+    padding:1rem 1.5rem !important;
+}
+
+.dropdown-wrap {
+    display:flex;
+}
+
+/* SIZE LANG DROPDOWN */ 
+
+.wcml-dropdown {
+    width: auto !important;
+    margin-left:1rem;
+}
+
+#top-bar .inner-block {
+    padding-right:1rem;
+}
+
+
+/* Espacement devis  */
+
+#payment ul li div {
+    margin-left:10px;
+}
+
+
+
+/* coupon */
+
+.coupon {
+    display:none!important;
+}
+
+.nasa-before-load {
+    display:none !important;
+}

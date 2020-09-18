@@ -31,7 +31,7 @@ function wpdocs_remove_menus(){
   remove_menu_page( 'admin.php?page=wc-admin' );                  //Marketing
   remove_menu_page( 'admin.php?page=yith_woocompare_panel' );                  //Woo commerce compare
   remove_menu_page( 'admin.php?page=vc-general' );                  //Editeur de page Wp bakery
-  remove_menu_page( 'tools.php' );                  //Outils dont suppression données clients
+  /*remove_menu_page( 'tools.php' ); */                 //Outils dont suppression données clients
 }
 add_action( 'admin_menu', 'wpdocs_remove_menus' );
 
@@ -59,15 +59,6 @@ add_filter( 'custom_menu_order', 'wpse_custom_menu_order', 10, 1 );
 add_filter( 'menu_order', 'wpse_custom_menu_order', 10, 1 );
 
 
-
-
-
-
-
-
-
-
-
 if( !function_exists('debug') ){
 	function debug( ...$vars ){
 		echo '<pre>';
@@ -85,15 +76,42 @@ if( !function_exists('debug') ){
 /**
  *	Register all scripts and styles for this child theme
  */
+
+
+function wpdocs_selectively_enqueue_admin_script( $hook ) {
+    if ( 'post.php' != $hook ) {
+        return;
+    }
+    wp_enqueue_script('setRetailerPriceBackEnd', get_stylesheet_directory_uri() . '/assets/js/setRetailerPriceBackEnd.js', [], true, true);
+}
+add_action( 'admin_enqueue_scripts', 'wpdocs_selectively_enqueue_admin_script' );
+
 function theme_enqueue_styles_and_scripts() {
     wp_enqueue_style('elessi-style', get_template_directory_uri() . '/style.css');
     wp_enqueue_style('elessi-child-style', get_stylesheet_uri());
 
-    if( is_shop() ){
-    	wp_enqueue_script('shopTilt', get_stylesheet_directory_uri() . '/assets/js/shopTilt.js', [], true, true);
-	}
+    wp_enqueue_script('shopTilt', get_stylesheet_directory_uri() . '/assets/js/shopTilt.js', [], true, true);
+    wp_enqueue_script('customTextLabel', get_stylesheet_directory_uri() . '/assets/js/customTextLabel.js', [], true , true);
 
-    if(is_tax('product_cat') ||  is_shop()){
+    /**
+ * Replace the home link URL FOR ELESSI BREADRUMB
+ */
+        add_filter( 'woocommerce_breadcrumb_home_url', 'woo_custom_breadrumb_home_url' );
+        if(is_tax('product_cat') ||  is_shop() || is_tax('product-category') || is_product()){    
+            function woo_custom_breadrumb_home_url() {
+               /* return get_home_url() . '/shop/'; */
+               return get_home_url() . '/';
+            }
+        }
+    else {
+        function woo_custom_breadrumb_home_url() {
+           /* return get_home_url() . '/shop/'; */
+           return get_home_url() . '/';
+        }
+    }
+    
+    
+    if(is_tax('product_cat') ||  is_shop() || is_tax('product-category')){
         $currentObj = get_queried_object();
         $currentTermId = '';
         $termObj = '';
@@ -105,62 +123,22 @@ function theme_enqueue_styles_and_scripts() {
             $termObj = get_term_by('id', $currentTermId, 'product_cat');
             $termSlug = $termObj->slug;
         }
-        if($termSlug == 'retailers'){
-            wp_enqueue_style('customTextLabelCss', get_stylesheet_directory_uri() . '/assets/css/customTextLabel.css', [], false , false);
-        }
         else {
-            wp_enqueue_script('customTextLabel', get_stylesheet_directory_uri() . '/assets/js/customTextLabel.js', [], true , true);
+           
         }
-	    wp_enqueue_script('elessi-retailer-custom-page-js', get_stylesheet_directory_uri() . '/assets/js/retailerPage.js', [], true , true);
+	   /* wp_enqueue_script('elessi-retailer-custom-page-js', get_stylesheet_directory_uri() . '/assets/js/retailerPage.js', [], true , true);*/
 	    wp_enqueue_script('elessi-sweetalert2js', get_stylesheet_directory_uri() . '/assets/js/sweetalert2.all.min.js', [], true , true);
 	    wp_enqueue_style('elessi-sweetalert2css', get_stylesheet_directory_uri() . '/assets/css/sweetalert2.min.css', [], true);
 	    wp_enqueue_style('elessi-retailer-shop', get_stylesheet_directory_uri() . '/assets/css/retailershop.css', [], true);
         }
+    else {
+         wp_enqueue_script('customTextLabel', get_stylesheet_directory_uri() . '/assets/js/customTextLabel.js', [], true , true);
+         wp_enqueue_script('jquery', 'https://code.jquery.com/jquery-1.11.3.min.js', [], true , true);
+    }
     }
 add_action('wp_enqueue_scripts', 'theme_enqueue_styles_and_scripts', 998);
 
 require __DIR__  . DIRECTORY_SEPARATOR . 'postTypes'  . DIRECTORY_SEPARATOR . 'collectionPostType.php';
-
-/* adding informations to the user page 
-function messoeursetmoi_extra_user_fields($user){
-	if( current_user_can('edit_user') ):
-		$isretailer = get_user_meta($user->ID, 'isRetailer', true);
-		$disabledStyle = 'opacity:0.6;cursor:not-allowed;';
-		?>
-		<h3><?=__('Retailer', 'blank')?></h3>
-		<p><?=__('If the user is a retailer or not')?></p>
-		<table class="form-table" id="fieldset-retailer">
-			<tbody>
-			<tr>
-				<th>
-					<label for="isRetailerCheckbox" style="<?=get_current_user_id() == $user->ID ? $disabledStyle : ''?>">
-						Is he a retailer ?
-					</label>
-				</th>
-				<td>
-					<input type="checkbox" id="isRetailerCheckbox" name="isRetailer" value="true" <?=!empty($isretailer) ? 'checked' : ''?> <?=get_current_user_id() == $user->ID ? 'disabled' : ''?> style="<?=get_current_user_id() == $user->ID ? $disabledStyle : ''?>">
-					<label for="isRetailerCheckbox" style="<?=get_current_user_id() == $user->ID ? $disabledStyle : ''?>">
-						<?=__('Checked if the user is a retailer', 'blank')?>
-					</label>
-				</td>
-			</tr>
-			</tbody>
-		</table>
-	<?php
-	endif;
-}
-add_action( 'show_user_profile', 'messoeursetmoi_extra_user_fields' );
-add_action( 'edit_user_profile', 'messoeursetmoi_extra_user_fields' );
-
-function messoeursetmoi_save_extra_user_fields($user_id){
-	if ( !current_user_can( 'edit_user', $user_id ) ) {
-		return false;
-	}
-
-	update_user_meta( $user_id, 'isRetailer', array_key_exists('isRetailer', $_POST) ? $_POST['isRetailer'] : false );
-}
-add_action( 'personal_options_update', 'messoeursetmoi_save_extra_user_fields' );
-add_action( 'edit_user_profile_update', 'messoeursetmoi_save_extra_user_fields' );*/
 
 function my_phpmailer_configuration( $phpmailer ) {
 	$phpmailer->isSMTP();
@@ -176,15 +154,15 @@ function my_phpmailer_configuration( $phpmailer ) {
 
 	// Configurations complémentaires
 	$phpmailer->SMTPSecure = "tls"; // Sécurisation du serveur SMTP : ssl ou tls
-	$phpmailer->From = "webmaster@eyecone.com"; // Adresse email d'envoi des mails
-	$phpmailer->FromName = "Eyecone"; // Nom affiché lors de l'envoi du mail
+	$phpmailer->From = "info@messoeursetmoi.be"; // Adresse email d'envoi des mails
+	$phpmailer->FromName = "Messoeursetmoi"; // Nom affiché lors de l'envoi du mail
 }
 add_action( 'phpmailer_init', 'my_phpmailer_configuration' );
 
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Register Custom Taxonomy
-function retailer() {
+/*function retailer() {
 	$labels = array(
 		'name'                       => _x( 'Retailer', 'Taxonomy General Name', 'text_domain' ),
 		'singular_name'              => _x( 'Retailers', 'Taxonomy Singular Name', 'text_domain' ),
@@ -256,7 +234,52 @@ function retailer() {
 	];
 	register_post_type('retailer_order', $postTypeArgs);
 }
-add_action( 'init', 'retailer', 0 );
+add_action( 'init', 'retailer', 0 );*/
+
+
+////////////////////////////////////////////////////////////////////////////////////
+// Register saison taxonomy
+function collection_visibility() {
+	$labels = array(
+		'name'                       => _x( 'Collection visible', 'Taxonomy General Name', 'text_domain' ),
+		'singular_name'              => _x( 'Collection visibles', 'Taxonomy Singular Name', 'text_domain' ),
+		'menu_name'                  => __( 'Collection visible', 'text_domain' ),
+		'all_items'                  => __( 'All Collection visibles', 'text_domain' ),
+		'parent_item'                => __( 'Parent Collection visible', 'text_domain' ),
+		'parent_item_colon'          => __( 'Parent Collection visible :', 'text_domain' ),
+		'new_item_name'              => __( 'New Collection visible', 'text_domain' ),
+		'add_new_item'               => __( 'Add a new Collection visible', 'text_domain' ),
+		'edit_item'                  => __( 'Edit Collection visible', 'text_domain' ),
+		'update_item'                => __( 'Update Collection visible', 'text_domain' ),
+		'view_item'                  => __( 'See Collection visible', 'text_domain' ),
+		'separate_items_with_commas' => __( 'Separate item with commas', 'text_domain' ),
+		'add_or_remove_items'        => __( 'Add or remove Collection visible', 'text_domain' ),
+		'choose_from_most_used'      => __( 'Choose from most used Collection visible', 'text_domain' ),
+		'popular_items'              => __( 'Popular Collection visible', 'text_domain' ),
+		'search_items'               => __( 'Search Collection visible', 'text_domain' ),
+		'not_found'                  => __( 'Not Found', 'text_domain' ),
+		'no_terms'                   => __( 'Not in Collection visible', 'text_domain' ),
+		'items_list'                 => __( 'Collection visible list ', 'text_domain' ),
+		'items_list_navigation'      => __( 'Collection visible list navigation', 'text_domain' ),
+	);
+	$args = array(
+		'labels'                     => $labels,
+		'hierarchical'               => true,
+		'public'                     => true,
+		'show_ui'                    => true,
+		'show_admin_column'          => true,
+		'show_in_nav_menus'          => true,
+		'show_tagcloud'              => true,
+		'show_in_rest'               => true,
+	);
+	register_taxonomy( 'collection_visible', array( 'collection' ), $args );
+
+
+}
+add_action( 'init', 'collection_visibility', 0 );
+
+
+
 
 /**
  * register all the meta boxes here for the retailer orders
@@ -394,26 +417,24 @@ function messoeursetmoi_render_order_products( WP_Post $post){
 /**
  * Exclude products from a particular category on the shop page
  */
+
 function custom_pre_get_posts_query( $q ) {
     $user = wp_get_current_user();
     if($user->roles && $user->roles[0]) {
        if ($user->roles[0] == 'retailer' || current_user_can( 'edit_posts' )) {
                 $tax_query = (array) $q->get( 'tax_query' );
 
-    $tax_query[] = array(
-        array(
-            'taxonomy' => 'product_cat',
-            'field'    => 'slug',
-            'terms'    => array( ''),
-            'operator' => 'OR',
-           ) 
-    );
-
-    $q->set( 'tax_query', $tax_query );
-       }
+            $tax_query[] = array(
+                array(
+                    'taxonomy' => 'product_cat',
+                    'field'    => 'slug',
+                    'terms'    => array(''),
+                    'operator' => 'OR',
+                   ) 
+            );
+        }
     }
     else {
-        
      $tax_query = (array) $q->get( 'tax_query' );
         $tax_query[] = array(
             array(
@@ -424,61 +445,10 @@ function custom_pre_get_posts_query( $q ) {
                ) 
         );
         $q->set( 'tax_query', $tax_query );
-
-        
     }
-    
-   
 }
 add_action( 'woocommerce_product_query', 'custom_pre_get_posts_query' );
 
-/**
- * Add the retailer price to the simple product
- 
-function misha_adv_product_options(){
-	echo '<div class="options_group">';
-
-	woocommerce_wp_text_input( array(
-		'id' => 'retailer_price',
-		'label' => 'Retailer price (&euro;):',
-		'value' => get_post_meta( get_the_ID(), 'retailer_price', true ),
-		'wrapper_class' => 'form-field-wide',
-		'type' => 'number',
-		'custom_attributes' => ['step' => 'any', 'min' => '0']
-	) );
-
-	echo '</div>';
-}
-add_action( 'woocommerce_product_options_pricing', 'misha_adv_product_options');
-
-function misha_save_fields( $ord_id ){
-	update_post_meta( $ord_id, 'retailer_price', $_POST[ 'retailer_price' ] );
-}
-add_action( 'woocommerce_process_product_meta', 'misha_save_fields', 10, 2 );*/
-
-/**
- * Add the retailer price product variation
- * @param $loop
- * @param $variation_data
- * @param $variation
- */
-/*function bbloomer_add_custom_field_to_variations( $loop, $variation_data, $variation ) {
-	woocommerce_wp_text_input( array(
-			'id' => 'retailer_price[' . $loop . ']',
-			'class' => 'short',
-			'label' => __( 'Retailer price', 'woocommerce' ),
-			'value' => get_post_meta( $variation->ID, 'retailer_price', true ),
-			'type' => 'number'
-		)
-	);
-}
-add_action( 'woocommerce_variation_options_pricing', 'bbloomer_add_custom_field_to_variations', 10, 3 );*/
-
-/**
- * Save the retailer price meta
- * @param $variation_id
- * @param $i
- */
 function bbloomer_save_custom_field_variations( $variation_id, $i ) {
 	$custom_field = $_POST['retailer_price'][$i];
 	if ( isset( $custom_field ) ) update_post_meta( $variation_id, 'retailer_price', esc_attr( $custom_field ) );
@@ -630,13 +600,7 @@ function changeSizeguiePlace(){
 
 
 
-/**
- * Replace the home link URL FOR ELESSI BREADRUMB
- */
-add_filter( 'woocommerce_breadcrumb_home_url', 'woo_custom_breadrumb_home_url' );
-function woo_custom_breadrumb_home_url() {
-    return get_home_url() . '/shop/';
-}
+
 
 function addSizeToName( $productName, $cart_item = null, $cart_item_key = null ){
 	$name = explode(',', $productName);
@@ -649,96 +613,22 @@ function addSizeToName( $productName, $cart_item = null, $cart_item_key = null )
 }
 add_filter('woocommerce_cart_item_name', 'addSizeToName');
 
-function hidemywidget($all_widgets) {
-	if( is_shop() ){
-		array_pop($all_widgets['shop-sidebar']);
-	}
-	return $all_widgets;
+
+add_filter( 'woocommerce_hide_invisible_variations', '__return_false' );
+function wcbv_variation_is_active( $active, $variation ) {
+ if(!$variation->is_in_stock()) {
+ return false;
+ }
+ return $active;
 }
-add_filter('sidebars_widgets', 'hidemywidget');
+add_filter( 'woocommerce_variation_is_active', 'wcbv_variation_is_active', 10, 2 );
 
-/**************************************** HIDE TERMS THAT WE DON T WANT TO DISPLAY *******************************************************/
-/*
-function ts_get_subcategory_terms( $terms, $taxonomies, $args ) {
-	if( is_shop() ){
-		$new_terms = array();
 
-		// if it is a product category and on the shop page
-		if ( in_array( 'product_cat', $taxonomies ) ) {
-			foreach ( $terms as $key => $term ) {
-				if ( !in_array( $term->slug, ['uncategorised','retailers'] ) ) { //pass the slug name here
-					$new_terms[] = $term;
-				}
-			}
 
-			$terms = $new_terms;
-		}
-	}
-
-	return $terms;
+add_filter( 'woocommerce_ajax_variation_threshold', 'marce_wc_inc_ajax_threshold' );
+function marce_wc_inc_ajax_threshold() {
+    return 110;
 }
-add_filter( 'get_terms', 'ts_get_subcategory_terms', 10, 3 );
-*/
-
-/*
-
-add_action( 'woocommerce_product_query', 'ts_custom_pre_get_posts_query' );
-
-function ts_custom_pre_get_posts_query( $q ) {
-    $myQueried = get_queried_object();
-    
-    if(!empty($myQueried->slug) && $myQueried->slug != 'retailers' ) {
-        $tax_query = (array) $q->get( 'tax_query' );
-        $tax_query[] = array(
-        'taxonomy' => 'product_cat',
-        'field' => 'slug',
-        'terms' => array( 'uncategorised','retailers'), // Don't display products in the clothing category on the shop page.
-        'operator' => 'NOT IN'
-        );
-
-        $q->set( 'tax_query', $tax_query );
-        }
-    else {
-        $tax_query = (array) $q->get( 'tax_query' );
-
-        $tax_query[] = array(
-        'taxonomy' => 'product_cat',
-        'field' => 'slug',
-        'terms' => array( 'uncategorised',), // Don't display products in the clothing category on the shop page.
-        'operator' => 'NOT IN'
-        );
-        $q->set( 'tax_query', $tax_query );
-    }
-}*/
-
-
-
-
-
-
-
-
-
-
-
-/* CUSTOM PRICE REGARDING THE ROLE */
-
-/**
- * Set a different price for multiple different WooCommerce customers.
- *
- * @param float $price The current price of the item.
- * @return float
- */
-
-add_role(
-    'retailer',
-    __( 'Retailer Client' ),
-    array(
-    'read'         => true,  // true allows this capability
-    'edit_posts'   => false,
-    )
-);
-
 /* Disable payement method for custom user role */
 
 /* 
@@ -760,9 +650,9 @@ function bbloomer_paypal_disable_manager( $available_gateways ) {
 /*echo "<pre>";
         var_dump($available_gateways);
         echo "</pre>";*/
-    if($user->roles && $user->roles[0]) {
-       if ($user->roles[0] == 'retailer' ) {
-        unset( $available_gateways['ppec_paypal'] , $available_gateways['bacs']  );
+    if($user->roles && $user->roles[0] || current_user_can( 'edit_posts' )) {
+       if ($user->roles[0] == 'retailer' || $user->roles[0] == 'administrator') {
+        unset( $available_gateways['ppec_paypal'] , $available_gateways['bacs'] , $available_gateways['paypal']);
        }
         else {
         unset( $available_gateways['cheque'] );
@@ -777,7 +667,122 @@ function bbloomer_paypal_disable_manager( $available_gateways ) {
 }
 
 add_filter( 'woocommerce_available_payment_gateways', 'bbloomer_paypal_disable_manager' );
-  
+
+
+
+
+
+
+//Using this code you can activate your plugin from the functions.php
+    function activate_plugin_via_php() {
+        $active_plugins = get_option( 'active_plugins' );
+        array_push($active_plugins, 'woocommerce/woocommerce.php'); /* Here just replace unyson plugin directory and plugin file*/
+        update_option( 'active_plugins', $active_plugins );    
+    }
+add_action( 'init', 'activate_plugin_via_php' );
+
+
+
+/* HIDE RELATED PRODUCT */
+remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 );
+
+
+
+/** "New user" email to john@snow.com instead of admin. */
+add_filter( 'wp_new_user_notification_email', 'my_wp_new_user_notification_email', 10, 3 );
+function my_wp_new_user_notification_email( $notification, $user, $blogname ) {
+    
+    $lienEditAdresse = "https://www.messoeursetmoi.be/mon-compte/edit-address/";
+    $lienEditAccount = "https://www.messoeursetmoi.be/mon-compte/edit-account/";
+    $lienConnection  = "https://messoeursetmoi.be/mon-compte";
+    $userPassword    =  $user->user_pass;
+    $userMail   =  $user->user_email;
+    $user_login = $user->user_login;
+    $reset_key = get_password_reset_key( $user );
+    $user_id = $user->ID;
+    
+    $regenPassword = esc_url( add_query_arg( array( 'key' => $reset_key, 'id' => $user_id ), wc_get_endpoint_url( 'lost-password', '', wc_get_page_permalink( 'myaccount' ) ) ) );
+    $regenPasswordEN = "https://www.messoeursetmoi.be/my-account/lost-password/?key={$reset_key}&id={$user_id}&lang=en";
+    
+    $notification['headers'] = "From: Messoeursetmoi <info@messoeursetmoi.be> \n\r Content-Type: text/html; charset=utf-8\r\n MIME-Version: 1.0\r\n";
+    $notification['subject'] = sprintf( "[%s] Thanks %s for your registration.", $blogname, $user->user_login );
+    $notification['message'] = "
+                 <!DOCTYPE html>
+                <table border='0' cellpadding='0' cellspacing='0' height='100%' width='100%' style='background-color:#f7f7f7;padding-top:60px;padding-bottom:60px;'>
+				<tbody>
+                    <tr>
+                        <td align='center' valign='top' style='width:600px;'>
+                            <p style='margin-top:0'><img src='https://messoeursetmoi.be/wp-content/uploads/2020/04/Logo-mes-soeurs.png' alt='Mes soeurs et moi' style='border:none;display:inline-block;font-size:14px;font-weight:bold;height:auto;outline:none;text-decoration:none;text-transform:capitalize;vertical-align:middle;max-width:100%;margin-left:0;margin-right:0' class='CToWUd'></p>						
+                            <table border='0' cellpadding='0' cellspacing='0'  id='m_-8477349831290930821template_container' style='background-color:#ffffff;border:1px solid #dedede;border-radius:3px;width:600px;text-align:center;'>
+                                <tbody>
+                                    <div style='margin-left:15px;margin-top:15px;margin-right:15px;'>
+                                        <h2 style='margin-left:15px;margin-top:15px;margin-right:15px;'>Bonjour {$user->user_login},</h2>
+                                        <p style='margin-left:15px;margin-top:15px;margin-right:15px;'>
+                                           C’est avec plaisir que nous vous confirmons votre accès à notre plateforme B2B. <br/>Vous trouverez ci-dessous les données liées à votre compte :
+                                        </p>
+                                        <p style='margin-left:15px;margin-top:15px;margin-right:15px;'>
+                                            Identifiant : {$userMail}<br/>
+                                            <p>
+                                                <a class='link' href='{$regenPassword}'  style='display:inline-block;height:35px;width:250px;background-color:black;color:white;text-decoration:none;text-align:center;'><span style='display:block;margin-left:20px;margin-top:10px;margin-right:20px;margin-bottom:10px;'>&nbsp;&nbsp; Créer votre mot de passe &nbsp;&nbsp;</span>  </a>
+                                            </p>
+                                            Nous vous souhaitons une belle découverte et restons à votre disposition pour toute question.
+                                        </p>
+                                        <p>
+                                            Belle journée,<br/>
+                                            Mes Sœurs &amp; Moi<br/>
+                                            <a href='https://www.messoeursetmoi.be/' style='color:back;'>www.messoeuretmoi.be</a>
+                                        </p>
+                                        <p>
+                                            Suivez-nous sur les réseaux sociaux<br/>
+                                            <a href='https://www.facebook.com/messoeursetmoi/' style='color:back;'>Facebook</a>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <a href='https://www.instagram.com/messoeursetmoi_official/' style='color:back;'>Instagram</a>
+                                        </p>
+                                    </div>
+                                </tbody>
+                                <tfoot>
+                                </tfoot>
+                            </table>
+                            <br/><br/>
+                            <table border='0' cellpadding='0' cellspacing='0'  id='m_-8477349831290930821template_container' style='background-color:#ffffff;border:1px solid #dedede;border-radius:3px;width:600px;text-align:center;'>
+                                <tbody>
+                                    <div style='margin-left:15px;margin-top:15px;margin-right:15px;'>
+                                        <h2 style='margin-left:15px;margin-top:15px;margin-right:15px;'>Dear {$user->user_login},</h2>
+                                        <p style='margin-left:15px;margin-top:15px;margin-right:15px;'>
+                                           We are pleased to confirm your access to our B2B platform. Please find below the data related to your account :
+                                        </p>
+                                        <p style='margin-left:15px;margin-top:15px;margin-right:15px;'>
+                                            Username : {$userMail}<br/>
+                                             <p>
+                                                <a class='link' href='{$regenPasswordEN}&lang=en'  style='display:inline-block;height:35px;width:250px;background-color:black;color:white;text-decoration:none;text-align:center;'><span style='display:block;margin-left:20px;margin-top:10px;margin-right:20px;margin-bottom:10px;'>&nbsp;&nbsp; Set your password &nbsp;&nbsp;</span>  </a>
+                                            </p>
+                                            We wish you a nice discovery and if you have any questions, please do not hesitate to contact us.
+                                        </p>
+                                        <p>
+                                            Kind regards,<br/>
+                                            Mes Sœurs &amp; Moi<br/>
+                                            <a href='https://www.messoeursetmoi.be/' style='color:back;'>www.messoeuretmoi.be</a>
+                                        </p>
+                                        <p>
+                                            Follow us on social media<br/>
+                                            <a href='https://www.facebook.com/messoeursetmoi/' style='color:back;'>Facebook</a>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <a href='https://www.instagram.com/messoeursetmoi_official/' style='color:back;'>Instagram</a>
+                                        </p>
+                                    </div>
+                                </tbody>
+                                <tfoot>
+                                </tfoot>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+    ";
+    
+  return $notification;
+}
+
 
 
 

@@ -34,7 +34,7 @@ get_header(); ?>
                 comments_template();
             endif;
   
-            echo "<div id='collectionNav'>";
+/*            echo "<div id='collectionNav'>";
             // Previous/next post navigation.
             the_post_navigation( array(
                 'next_text' => 
@@ -42,7 +42,7 @@ get_header(); ?>
                 'prev_text' => 
                     '<span class="button nav-post-title">%title</span>',
             ) );
-            echo "<div>";
+            echo "<div>";*/
   
         // End the loop.
         endwhile;
